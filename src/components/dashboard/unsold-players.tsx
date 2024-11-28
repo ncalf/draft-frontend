@@ -33,12 +33,9 @@ const columns: ColumnDef<UnsoldPlayer>[] = [
     id: "gms",
     accessorKey: "gms",
     size: 30,
+    sortDescFirst: true,
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="p-0 w-full justify-center"
-      >
+      <Button variant="ghost" onClick={() => column.toggleSorting()} className="p-0 w-full justify-center">
         GMS
       </Button>
     ),
@@ -48,12 +45,9 @@ const columns: ColumnDef<UnsoldPlayer>[] = [
     id: "k",
     accessorKey: "k",
     size: 30,
+    sortDescFirst: true,
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="p-0 w-full justify-center"
-      >
+      <Button variant="ghost" onClick={() => column.toggleSorting()} className="p-0 w-full justify-center">
         K
       </Button>
     ),
@@ -63,12 +57,9 @@ const columns: ColumnDef<UnsoldPlayer>[] = [
     id: "m",
     accessorKey: "m",
     size: 30,
+    sortDescFirst: true,
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="p-0 w-full justify-center"
-      >
+      <Button variant="ghost" onClick={() => column.toggleSorting()} className="p-0 w-full justify-center">
         M
       </Button>
     ),
@@ -78,12 +69,9 @@ const columns: ColumnDef<UnsoldPlayer>[] = [
     id: "hb",
     accessorKey: "hb",
     size: 30,
+    sortDescFirst: true,
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="p-0 w-full justify-center"
-      >
+      <Button variant="ghost" onClick={() => column.toggleSorting()} className="p-0 w-full justify-center">
         HB
       </Button>
     ),
@@ -93,12 +81,9 @@ const columns: ColumnDef<UnsoldPlayer>[] = [
     id: "ff",
     accessorKey: "ff",
     size: 30,
+    sortDescFirst: true,
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="p-0 w-full justify-center"
-      >
+      <Button variant="ghost" onClick={() => column.toggleSorting()} className="p-0 w-full justify-center">
         FF
       </Button>
     ),
@@ -108,12 +93,9 @@ const columns: ColumnDef<UnsoldPlayer>[] = [
     id: "fa",
     accessorKey: "fa",
     size: 30,
+    sortDescFirst: true,
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="p-0 w-full justify-center"
-      >
+      <Button variant="ghost" onClick={() => column.toggleSorting()} className="p-0 w-full justify-center">
         FA
       </Button>
     ),
@@ -123,12 +105,9 @@ const columns: ColumnDef<UnsoldPlayer>[] = [
     id: "g",
     accessorKey: "g",
     size: 30,
+    sortDescFirst: true,
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="p-0 w-full justify-center"
-      >
+      <Button variant="ghost" onClick={() => column.toggleSorting()} className="p-0 w-full justify-center">
         G
       </Button>
     ),
@@ -138,12 +117,9 @@ const columns: ColumnDef<UnsoldPlayer>[] = [
     id: "b",
     accessorKey: "b",
     size: 30,
+    sortDescFirst: true,
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="p-0 w-full justify-center"
-      >
+      <Button variant="ghost" onClick={() => column.toggleSorting()} className="p-0 w-full justify-center">
         B
       </Button>
     ),
@@ -153,12 +129,9 @@ const columns: ColumnDef<UnsoldPlayer>[] = [
     id: "ho",
     accessorKey: "ho",
     size: 30,
+    sortDescFirst: true,
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="p-0 w-full justify-center"
-      >
+      <Button variant="ghost" onClick={() => column.toggleSorting()} className="p-0 w-full justify-center">
         HO
       </Button>
     ),
@@ -168,12 +141,9 @@ const columns: ColumnDef<UnsoldPlayer>[] = [
     id: "t",
     accessorKey: "t",
     size: 30,
+    sortDescFirst: true,
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="p-0 w-full justify-center"
-      >
+      <Button variant="ghost" onClick={() => column.toggleSorting()} className="p-0 w-full justify-center">
         T
       </Button>
     ),
@@ -198,7 +168,7 @@ const columns: ColumnDef<UnsoldPlayer>[] = [
 
 export function UnsoldPlayersCard() {
   const position = useDashboardStore((state) => state.position);
-  const { isLoading, data, error } = useUnsoldPlayersQuery(position);
+  const { isLoading, data } = useUnsoldPlayersQuery(position);
 
   return (
     <Card className="col-start-9 col-end-11 row-start-4 row-end-5 p-2">
