@@ -1,8 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { PositionState, UnsoldPlayer } from "./types";
 
-export const BACKEND_IP = "http://192.168.1.23:8080/ncalf/draft/";
+export const BACKEND_IP = `http://${import.meta.env.VITE_BACKEND_IP}/ncalf/draft`;
 export const SEASON = "2024";
+
+// console.log(process.env);
 
 export function useUnsoldPlayersQuery(position: PositionState) {
   return useQuery({
@@ -16,8 +18,9 @@ export function useUnsoldPlayersQuery(position: PositionState) {
       }
 
       // fetch the unsold player data
-      const response = await fetch(BACKEND_IP + "/players/notsold/" + SEASON + "/" + position);
+      const response = await fetch(BACKEND_IP + "/players/unsold/" + SEASON + "/" + position);
       unsoldPlayers = await response.json();
+      console.log(unsoldPlayers);
 
       return unsoldPlayers;
     },
