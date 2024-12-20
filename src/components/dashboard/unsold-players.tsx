@@ -5,164 +5,101 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useUnsoldPlayersQuery } from "@/lib/queries";
 import { useDashboardStore } from "@/lib/store";
 import { UnsoldPlayer } from "@/lib/types";
-import { ColumnDef } from "@tanstack/react-table";
+import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
+import { AllCommunityModule, ColDef, ModuleRegistry } from "ag-grid-community";
+import { AgGridReact } from "ag-grid-react";
 import { User } from "lucide-react";
-import { DataTable } from "../ui/data-table";
 
-const columns: ColumnDef<UnsoldPlayer>[] = [
-  {
-    id: "name",
-    size: 100,
-    header: "Name",
-    accessorFn: (player: UnsoldPlayer) => player.FirstName + " " + player.Surname,
-  },
-  {
-    id: "position",
-    size: 40,
-    header: "Position",
-    accessorKey: "posn",
-  },
-  {
-    id: "club",
-    size: 40,
-    header: "Club",
-    accessorKey: "Club",
-  },
+ModuleRegistry.registerModules([AllCommunityModule]);
 
+type Params = { data: UnsoldPlayer };
+const columnDefs: ColDef[] = [
   {
-    id: "gms",
-    accessorKey: "gms",
-    size: 30,
-    sortDescFirst: true,
-    header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting()} className="p-0 w-full justify-center">
-        GMS
-      </Button>
-    ),
-    cell: ({ row }) => <div className="text-center">{row.getValue("gms")}</div>,
+    field: "fullName",
+    headerName: "Name",
+    sortable: true,
+    valueGetter: (params: Params) => `${params.data.FirstName} ${params.data.Surname}`,
+    flex: 1,
   },
   {
-    id: "k",
-    accessorKey: "k",
-    size: 30,
-    sortDescFirst: true,
-    header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting()} className="p-0 w-full justify-center">
-        K
-      </Button>
-    ),
-    cell: ({ row }) => <div className="text-center">{row.getValue("k")}</div>,
+    field: "posn",
+    headerName: "Position",
+    flex: 1,
   },
   {
-    id: "m",
-    accessorKey: "m",
-    size: 30,
-    sortDescFirst: true,
-    header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting()} className="p-0 w-full justify-center">
-        M
-      </Button>
-    ),
-    cell: ({ row }) => <div className="text-center">{row.getValue("m")}</div>,
+    field: "Club",
+    headerName: "Club",
+    flex: 1,
   },
   {
-    id: "hb",
-    accessorKey: "hb",
-    size: 30,
-    sortDescFirst: true,
-    header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting()} className="p-0 w-full justify-center">
-        HB
-      </Button>
-    ),
-    cell: ({ row }) => <div className="text-center">{row.getValue("hb")}</div>,
+    field: "gms",
+    headerName: "GMS",
+    flex: 0.5,
+    cellClass: "text-center",
   },
   {
-    id: "ff",
-    accessorKey: "ff",
-    size: 30,
-    sortDescFirst: true,
-    header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting()} className="p-0 w-full justify-center">
-        FF
-      </Button>
-    ),
-    cell: ({ row }) => <div className="text-center">{row.getValue("ff")}</div>,
+    field: "k",
+    headerName: "K",
+    flex: 0.5,
+    cellClass: "text-center",
   },
   {
-    id: "fa",
-    accessorKey: "fa",
-    size: 30,
-    sortDescFirst: true,
-    header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting()} className="p-0 w-full justify-center">
-        FA
-      </Button>
-    ),
-    cell: ({ row }) => <div className="text-center">{row.getValue("fa")}</div>,
+    field: "m",
+    headerName: "M",
+    flex: 0.5,
+    cellClass: "text-center",
   },
   {
-    id: "g",
-    accessorKey: "g",
-    size: 30,
-    sortDescFirst: true,
-    header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting()} className="p-0 w-full justify-center">
-        G
-      </Button>
-    ),
-    cell: ({ row }) => <div className="text-center">{row.getValue("g")}</div>,
+    field: "hb",
+    headerName: "HB",
+    flex: 0.5,
+    cellClass: "text-center",
   },
   {
-    id: "b",
-    accessorKey: "b",
-    size: 30,
-    sortDescFirst: true,
-    header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting()} className="p-0 w-full justify-center">
-        B
-      </Button>
-    ),
-    cell: ({ row }) => <div className="text-center">{row.getValue("b")}</div>,
+    field: "ff",
+    headerName: "FF",
+    flex: 0.5,
+    cellClass: "text-center",
   },
   {
-    id: "ho",
-    accessorKey: "ho",
-    size: 30,
-    sortDescFirst: true,
-    header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting()} className="p-0 w-full justify-center">
-        HO
-      </Button>
-    ),
-    cell: ({ row }) => <div className="text-center">{row.getValue("ho")}</div>,
+    field: "fa",
+    headerName: "FA",
+    flex: 0.5,
+    cellClass: "text-center",
   },
   {
-    id: "t",
-    accessorKey: "t",
-    size: 30,
-    sortDescFirst: true,
-    header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting()} className="p-0 w-full justify-center">
-        T
-      </Button>
-    ),
-    cell: ({ row }) => <div className="text-center">{row.getValue("t")}</div>,
+    field: "g",
+    headerName: "G",
+    flex: 0.5,
+    cellClass: "text-center",
   },
   {
-    id: "actions",
-    size: 30,
-    cell: () => {
-      //const test = row.original;
-      // contains all of the original row content to be used for selecting the player
-      // console.log("🚀 ~ test:", test);
-
-      return (
-        <Button variant="ghost" className="h-8 w-8 p-0">
-          <User className="h-4 w-4" />
-        </Button>
-      );
-    },
+    field: "b",
+    headerName: "B",
+    flex: 0.5,
+    cellClass: "text-center",
+  },
+  {
+    field: "ho",
+    headerName: "HO",
+    flex: 0.5,
+    cellClass: "text-center",
+  },
+  {
+    field: "t",
+    headerName: "T",
+    flex: 0.5,
+    cellClass: "text-center",
+  },
+  {
+    field: "actions",
+    headerName: "Actions",
+    flex: 0.5,
+    cellRenderer: (params: Params) => (
+      <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => console.log(params.data)}>
+        <User className="h-4 w-4" />
+      </Button>
+    ),
   },
 ];
 
@@ -182,12 +119,18 @@ export function UnsoldPlayersCard() {
             </Button>
           </DialogTrigger>
           <DialogContent className="max-h-[80vh] max-w-[80vw]">
+            <DialogTitle>Unsold Players</DialogTitle>
+            <DialogDescription>Description</DialogDescription>
+
             <div className="h-[600px]">
-              <DataTable
-                columns={columns}
-                data={data ?? []}
-                filter={{ column: "name", placeholder: "Filter by name..." }} // 'name' matches the column id
-                sortingDisplay={true}
+              <AgGridReact
+                columnDefs={columnDefs}
+                rowData={data ?? []}
+                defaultColDef={{
+                  sortable: true,
+                  resizable: true,
+                }}
+                suppressCellFocus={true}
               />
             </div>
           </DialogContent>
