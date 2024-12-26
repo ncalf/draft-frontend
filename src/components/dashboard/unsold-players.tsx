@@ -5,7 +5,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useUnsoldPlayersQuery } from "@/lib/queries";
 import { useDashboardStore } from "@/lib/store";
 import { UnsoldPlayer } from "@/lib/types";
-import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
 import { AllCommunityModule, ColDef, ModuleRegistry } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import { User } from "lucide-react";
@@ -17,14 +16,14 @@ const columnDefs: ColDef[] = [
   {
     field: "fullName",
     headerName: "Name",
-    sortable: true,
     valueGetter: (params: Params) => `${params.data.FirstName} ${params.data.Surname}`,
     flex: 1,
+    cellClass: "text-left",
   },
   {
     field: "posn",
     headerName: "Position",
-    flex: 1,
+    flex: 0.7,
   },
   {
     field: "Club",
@@ -35,65 +34,55 @@ const columnDefs: ColDef[] = [
     field: "gms",
     headerName: "GMS",
     flex: 0.5,
-    cellClass: "text-center",
   },
   {
-    field: "k",
+    field: "sk",
     headerName: "K",
     flex: 0.5,
-    cellClass: "text-center",
   },
   {
-    field: "m",
+    field: "sm",
     headerName: "M",
     flex: 0.5,
-    cellClass: "text-center",
   },
   {
-    field: "hb",
+    field: "shb",
     headerName: "HB",
     flex: 0.5,
-    cellClass: "text-center",
   },
   {
-    field: "ff",
+    field: "sff",
     headerName: "FF",
     flex: 0.5,
-    cellClass: "text-center",
   },
   {
-    field: "fa",
+    field: "sfa",
     headerName: "FA",
     flex: 0.5,
-    cellClass: "text-center",
   },
   {
-    field: "g",
+    field: "sg",
     headerName: "G",
     flex: 0.5,
-    cellClass: "text-center",
   },
   {
-    field: "b",
+    field: "sb",
     headerName: "B",
     flex: 0.5,
-    cellClass: "text-center",
   },
   {
-    field: "ho",
+    field: "sho",
     headerName: "HO",
     flex: 0.5,
-    cellClass: "text-center",
   },
   {
-    field: "t",
+    field: "st",
     headerName: "T",
     flex: 0.5,
-    cellClass: "text-center",
   },
   {
     field: "actions",
-    headerName: "Actions",
+    headerName: "-",
     flex: 0.5,
     cellRenderer: (params: Params) => (
       <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => console.log(params.data)}>
@@ -118,17 +107,17 @@ export function UnsoldPlayersCard() {
               Unsold Players
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-h-[80vh] max-w-[80vw]">
-            <DialogTitle>Unsold Players</DialogTitle>
-            <DialogDescription>Description</DialogDescription>
-
+          <DialogContent className="max-h-[80vh] max-w-[80vw] pt-10">
             <div className="h-[600px]">
               <AgGridReact
                 columnDefs={columnDefs}
                 rowData={data ?? []}
                 defaultColDef={{
                   sortable: true,
-                  resizable: true,
+                  resizable: false,
+                  sortingOrder: ["desc", null],
+                  cellClass: "text-center",
+                  headerClass: "text-center",
                 }}
                 suppressCellFocus={true}
               />

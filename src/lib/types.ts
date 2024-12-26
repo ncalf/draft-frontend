@@ -36,6 +36,19 @@ interface PlayerStats {
   t: string;
 }
 
+interface PlayerSeasonStats {
+  gms: number;
+  sk: string;
+  sm: string;
+  shb: string;
+  sff: string;
+  sfa: string;
+  sg: string;
+  sb: string;
+  sho: string;
+  st: string;
+}
+
 // the default info that is returned in a player object
 interface PlayerInfo {
   PlayerSeasonID: number;
@@ -105,7 +118,7 @@ export interface SoldPlayer extends PlayerInfo {
 }
 
 // returned by the unsold player endpoint, as a list with one object per player
-export interface UnsoldPlayer extends PlayerStats, PlayerInfo {
+export interface UnsoldPlayer extends PlayerSeasonStats, PlayerInfo {
   Club: string;
   posn: Position;
   nominated: 0 | 1;

@@ -18,6 +18,7 @@ export function useUnsoldPlayersQuery(position: PositionState) {
       // fetch the unsold player data
       const response = await fetch(BACKEND_IP + "/players/unsold/" + SEASON + "/" + position);
       unsoldPlayers = await response.json();
+      console.log(unsoldPlayers);
 
       return unsoldPlayers;
     },
