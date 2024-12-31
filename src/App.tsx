@@ -1,3 +1,4 @@
+import { Toaster } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Route, Switch } from "wouter";
@@ -12,6 +13,7 @@ function AppWrapper() {
     <>
       <QueryClientProvider client={queryClient}>
         <App />
+        <Toaster richColors />
         <ReactQueryDevtools />
       </QueryClientProvider>
     </>

@@ -56,10 +56,6 @@ interface PlayerInfo {
   Surname: string;
 }
 
-// set the TeamsTableRawAPIResponse to just a renamed verison of SoldPlayers
-// the same object is used in both, this just helps readability of code
-export type TeamsTableRawAPIResponse = SoldPlayer;
-
 // the type of a teams summary information
 export interface TeamData {
   summary: {
@@ -70,28 +66,9 @@ export interface TeamData {
     OB: number;
     sum_price: number;
   };
-  players: TeamsTableRawAPIResponse[];
 }
 
-// this is the form of that the team data is stored in the store, after it is modified after fetching from the backend
-/*
-  this means this type will be something like this:
-  {
-    0: {
-      summary: {
-        C: 2,
-        D: 4,
-        F: 2,
-        RK: 3,
-        OB: 2,
-        sum_price: 12.60,
-      },
-      players: [...list of players...],
-    }
-    ... continued for each ncalf team ...
-  }
-*/
-export type TeamsTableAPIResponse = Record<NcalfClubID, TeamData>;
+export type TeamsStatsAPIResponse = Record<NcalfClubID, TeamData>;
 
 // the type of the data that is returned from the backend when fetching a players 5-year-stats
 // the server returns a list of maximum-5 of these objects, with each one being one year

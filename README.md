@@ -21,7 +21,7 @@ The drafting website is built with react, with shadcn ui's premade components an
 
 | Route                             | HTTP Method | Description                                                                                                                                                          |
 | --------------------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/teams/table/:season`            | GET         | Retrieves a summary of all teams                                                                                                                                     |
+| `/teams/stats/:season`            | GET         | Retrieves a summary of all teams                                                                                                                                     |
 | `/player/stats/:season/:id`       | GET         | Retrivies the 5 year summary data for a player                                                                                                                       |
 | `/player/name/:season/:id`        | GET         | Retrieves a player's name                                                                                                                                            |
 | `/player/image/:season/:id`       | GET         | Retrieves a player's image                                                                                                                                           |
