@@ -1,50 +1,35 @@
-# React + TypeScript + Vite
+# NCALF Season Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+All python scripts for the personal project ncalf program, as well as a website frontend and backend for the drafting process.
+The drafting website is built with react, with shadcn ui's premade components and tailwind css to style it. Zustand is used as the state manager.
 
-Currently, two official plugins are available:
+## Starting the Frontend
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. Navigate to the frontend folder in the repository (run `npm install` if needed, to install dependencies.)
+2. Run `npm run host` for the website to check for errors, build and then host locally on the router.
 
-## Expanding the ESLint configuration
+## Starting the Backend
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+1. Navigate to the frontend folder in the repository (run `npm install` if needed, to install the dependencies.)
+2. Enter the `/src` folder in the terminal.
+3. Run `npm run host` to start up the backend.
+4. The backend is now accessible from the url of the device running it, on the port specified near the bottom of the `server.js` file, which should be `8080`.
 
-- Configure the top-level `parserOptions` property like this:
+## Backend Routes
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+> **All routes must start with `/ncalf/draft` after the ip and port of the server. E.g `http://192.168.1.16:8080/ncalf/draft/{route}`**
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+| Route                             | HTTP Method | Description                                                                                                                                                          |
+| --------------------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/teams/table/:season`            | GET         | Retrieves a summary of all teams                                                                                                                                     |
+| `/player/stats/:season/:id`       | GET         | Retrivies the 5 year summary data for a player                                                                                                                       |
+| `/player/name/:season/:id`        | GET         | Retrieves a player's name                                                                                                                                            |
+| `/player/image/:season/:id`       | GET         | Retrieves a player's image                                                                                                                                           |
+| `/players/sold/:season`           | GET         | Retrieves the list of sold players in order of recency                                                                                                               |
+| `/players/unsold/:season/:posn`   | GET         | Retrieves the list of unsold players for a given position                                                                                                            |
+| `/players/positionstotal/:season` | GET         | Retrieves the total players for each position                                                                                                                        |
+| `/player/sell`                    | PUT         | Sells a player to a team. Payload: `{"ncalf_club": (ncalf_club_id), "price": (price), "season": (current_season), "player_season_id": (id), "position": (position)}` |
+| `/player/undosale`                | PUT         | Undoes the sale of a player to a team. Payload: `{"season": (current_season), "player_season_id": (id)}`                                                             |
+| `/updatecurrentposition`          | PUT         | Updates the current position. Payload: `{"new_position": (new_position)}`                                                                                            |
+| `/player/updaterookieposition`    | PUT         | Updates the position for a rookie. Payload: `{"player_id": (player_season_id), "season": (current_season), "position": (position)}`                                  |
+| `/player/marknominated`           | PUT         | Marks a player as nominated. Payload: `{"player_id": (player_season_id), "season": (current_season)}`                                                                |
