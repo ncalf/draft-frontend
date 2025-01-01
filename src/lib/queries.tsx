@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { PositionState, UnsoldPlayer } from "./types";
 
 export const BACKEND_IP = `http://${import.meta.env.VITE_BACKEND_IP}/ncalf/draft`;
-export const SEASON = "2024";
+export const SEASON = "2025";
 
 export function useUnsoldPlayersQuery(position: PositionState) {
   return useQuery({
