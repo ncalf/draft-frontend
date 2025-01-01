@@ -8,6 +8,7 @@ import { UnsoldPlayer } from "@/lib/types";
 import { AllCommunityModule, ColDef, ModuleRegistry } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import { User } from "lucide-react";
+import { toast } from "sonner";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -94,7 +95,11 @@ const columnDefs: ColDef[] = [
 
 export function UnsoldPlayersCard() {
   const position = useDashboardStore((state) => state.position);
-  const { isLoading, data } = useUnsoldPlayersQuery(position);
+  const { isLoading, data, error } = useUnsoldPlayersQuery(position);
+
+  if (error) {
+    toast.error("Failed to fetch unsold players");
+  }
 
   return (
     <Card className="col-start-9 col-end-11 row-start-4 row-end-5 p-2">
