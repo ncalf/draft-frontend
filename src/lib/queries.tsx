@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { PositionState, TeamsStatsAPIResponse, UnsoldPlayer } from "./types";
+import { getClubNameById } from "./shelf";
+import { ClubPlayer, NcalfClubID, PositionState, TeamsStatsAPIResponse, TeamStats, UnsoldPlayer } from "./types";
 
 export const BACKEND_IP = `http://${import.meta.env.VITE_BACKEND_IP}/ncalf/draft`;
 export const SEASON = "2025";
@@ -16,7 +17,7 @@ export function useUnsoldPlayersQuery(position: PositionState) {
       }
 
       // fetch the unsold player data
-      const response = await fetch(BACKEND_IP + "/players/unsold/" + SEASON + "/" + position);
+      const response = await fetch(`${BACKEND_IP}/players/unsold/${SEASON}/${position}`);
       unsoldPlayers = await response.json();
 
       return unsoldPlayers;
@@ -24,19 +25,36 @@ export function useUnsoldPlayersQuery(position: PositionState) {
   });
 }
 
-export function useTeamStatsQuery() {
+export function useClubsStatsQuery() {
   return useQuery({
     queryKey: ["teamStats", SEASON],
     queryFn: async () => {
-      const response = await fetch(`${BACKEND_IP}/teams/stats${SEASON}`);
-      const teamStats: TeamsStatsAPIResponse = await response.json();
+      const response = await fetch(`${BACKEND_IP}/teams/stats/2024`);
+      const rawTeamStats: TeamsStatsAPIResponse = await response.json();
 
-      const rowData = Object.entries(teamStats).map(([teamId, teamData]) => ({
-        teamId,
-        ...teamData.summary,
+      const teamStats: TeamStats[] = rawTeamStats.map((team) => ({
+        club: getClubNameById(team.ncalfclubid),
+        C: team.C,
+        D: team.D,
+        F: team.F,
+        RK: team.RK,
+        OB: team.OB,
+        price: team.sum_price,
       }));
 
-      return rowData;
+      return teamStats;
+    },
+  });
+}
+
+export function useClubPlayersQuery(clubId: NcalfClubID) {
+  return useQuery({
+    queryKey: ["teamPlayers", clubId],
+    queryFn: async () => {
+      const response = await fetch(`${BACKEND_IP}/players/sold/2024/${clubId}`);
+      const players: ClubPlayer[] = await response.json();
+
+      return players;
     },
   });
 }
