@@ -36,3 +36,54 @@ export const getClubIdByName = (name: (typeof clubIdToName)[number]): NcalfClubI
   if (!entry) throw new Error(`Club name ${name} not found`);
   return Number(entry[0]) as NcalfClubID;
 };
+
+export const shortenedTeamIdToName = {
+  Ade: "Adelaide Crows",
+  Bris: "Brisbane Lions",
+  Carl: "Carlton Blues",
+  Coll: "Collingwood Magpies",
+  Ess: "Essendon Bombers",
+  WB: "Western Bulldogs",
+  Fre: "Fremantle Dockers",
+  Geel: "Geelong Cats",
+  GC: "Gold Coast Suns",
+  GWS: "Greater Western Sydney Giants",
+  Haw: "Hawthorn Hawks",
+  Melb: "Melbourne Demons",
+  NM: "North Melbourne Kangaroos",
+  PA: "Port Adelaide Power",
+  Rich: "Richmond Tigers",
+  StK: "St Kilda Saints",
+  Syd: "Sydney Swans",
+  WC: "West Coast Eagles",
+} as const;
+
+export const getTeamNameByShortenedName = (id: keyof typeof shortenedTeamIdToName): string => {
+  return shortenedTeamIdToName[id];
+};
+
+export function numberToPriceString(price: number | string): string {
+  if (typeof price === "string") {
+    return `$${Number(price).toLocaleString("en-AU", { minimumFractionDigits: 2 })}`;
+  }
+  return `$${price.toLocaleString("en-AU", { minimumFractionDigits: 2 })}`;
+}
+
+export const shortenedPositionToName = {
+  C: "Centre",
+  D: "Defender",
+  F: "Forward",
+  OB: "Onballer",
+  RK: "Ruck",
+  ROOK: "Rookie",
+  none: "None Selected",
+  loading: "Loading",
+};
+
+export function getPositionNameByShortenedName(position: keyof typeof shortenedPositionToName): string {
+  return shortenedPositionToName[position];
+}
+
+export function getShortenedPositionName(position: keyof typeof shortenedPositionToName): string {
+  return shortenedPositionToName[position];
+}

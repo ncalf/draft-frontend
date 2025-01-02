@@ -1,10 +1,10 @@
+import { ClubTableCard } from "./club-table";
 import { MVPsCard } from "./mvps";
 import { PlayerInfoCard } from "./player-info";
 import { PositionFilterCard } from "./position-filter";
 import { RemainingPlayersCard } from "./remaining-players";
 import { SellOrGenerateCard } from "./sell-or-generate";
-import { SoldPlayerCard } from "./sold-player";
-import { TeamTableCard } from "./team-table";
+import { SoldPlayerCard } from "./sold-players";
 import { UnsoldPlayersCard } from "./unsold-players";
 
 export default function Dashboard() {
@@ -17,7 +17,7 @@ export default function Dashboard() {
         <RemainingPlayersCard />
         <SellOrGenerateCard />
         <SoldPlayerCard />
-        <TeamTableCard />
+        <ClubTableCard />
         <UnsoldPlayersCard />
       </div>
     </div>

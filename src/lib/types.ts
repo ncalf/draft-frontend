@@ -35,7 +35,7 @@ export interface PlayerSeasonStats {
   st: string;
 }
 
-export type TeamsStatsAPIResponse = {
+export interface TeamStats {
   ncalfclubid: NcalfClubID;
   C: number;
   D: number;
@@ -43,19 +43,9 @@ export type TeamsStatsAPIResponse = {
   RK: number;
   OB: number;
   sum_price: string;
-}[];
+}
 
-export type TeamStats = {
-  club: string;
-  C: number;
-  D: number;
-  F: number;
-  RK: number;
-  OB: number;
-  price: string;
-};
-
-export interface ClubPlayer {
+export interface SoldPlayer {
   FirstName: string;
   PlayerSeasonID: number;
   Surname: string;

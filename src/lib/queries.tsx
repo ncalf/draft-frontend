@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getClubNameById } from "./shelf";
-import { ClubPlayer, NcalfClubID, PositionState, TeamsStatsAPIResponse, TeamStats, UnsoldPlayer } from "./types";
+import { NcalfClubID, PositionState, SoldPlayer, TeamStats, UnsoldPlayer } from "./types";
 
 export const BACKEND_IP = `http://${import.meta.env.VITE_BACKEND_IP}/ncalf/draft`;
 export const SEASON = "2025";
@@ -27,20 +26,10 @@ export function useUnsoldPlayersQuery(position: PositionState) {
 
 export function useClubsStatsQuery() {
   return useQuery({
-    queryKey: ["teamStats", SEASON],
+    queryKey: ["clubStats", SEASON],
     queryFn: async () => {
       const response = await fetch(`${BACKEND_IP}/teams/stats/2024`);
-      const rawTeamStats: TeamsStatsAPIResponse = await response.json();
-
-      const teamStats: TeamStats[] = rawTeamStats.map((team) => ({
-        club: getClubNameById(team.ncalfclubid),
-        C: team.C,
-        D: team.D,
-        F: team.F,
-        RK: team.RK,
-        OB: team.OB,
-        price: team.sum_price,
-      }));
+      const teamStats: TeamStats[] = await response.json();
 
       return teamStats;
     },
@@ -49,10 +38,22 @@ export function useClubsStatsQuery() {
 
 export function useClubPlayersQuery(clubId: NcalfClubID) {
   return useQuery({
-    queryKey: ["teamPlayers", clubId],
+    queryKey: ["clubPlayers", clubId, SEASON],
     queryFn: async () => {
       const response = await fetch(`${BACKEND_IP}/players/sold/2024/${clubId}`);
-      const players: ClubPlayer[] = await response.json();
+      const players: SoldPlayer[] = await response.json();
+
+      return players;
+    },
+  });
+}
+
+export function useSoldPlayersQuery() {
+  return useQuery({
+    queryKey: ["soldPlayers", SEASON],
+    queryFn: async () => {
+      const response = await fetch(`${BACKEND_IP}/players/sold/2024`);
+      const players: SoldPlayer[] = await response.json();
 
       return players;
     },
