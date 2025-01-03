@@ -4,7 +4,6 @@ import { create } from "zustand";
 // prettier-ignore
 import { maxPlayersPerPosition,template } from "./shelf";
 import {
-  NcalfClubID,
   OriginalRookies,
   PlayerImageAPIResponse,
   PlayerNameAPIResponse,
@@ -374,7 +373,7 @@ export const useDashboardStore = create<DashboardStore>()((set, get) => ({
             result[playerInstance.ncalfclub].players.push(playerInstance);
 
             // increment the clubs position count of the current players position by 1
-            result[playerInstance.ncalfclub].summary[playerInstance.posn]++;
+            result[playerInstance.ncalfclub].summary[playerInstance.Position]++;
 
             // add the price of the current player to their total price
             result[playerInstance.ncalfclub].summary.sum_price = parseFloat(
