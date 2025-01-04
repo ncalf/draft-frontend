@@ -1,4 +1,4 @@
-import { NcalfClubID } from "./types";
+import { Position, TeamID } from "./types";
 
 export const columnsIdsToDisplayName: { [key: string]: string } = {
   gms: "GMS",
@@ -13,7 +13,7 @@ export const columnsIdsToDisplayName: { [key: string]: string } = {
   t: "T",
 };
 
-const clubIdToName: { [key: number]: string } = {
+const teamIdToName: { [key: number]: string } = {
   1: "Barnestoneworth United",
   2: "Berwick Blankets",
   3: "Bogong Bedouin",
@@ -27,48 +27,50 @@ const clubIdToName: { [key: number]: string } = {
   11: "Southern Squadron",
 };
 
-export const getClubNameById = (id: keyof typeof clubIdToName): string => {
-  return clubIdToName[id];
+export const getTeamNameById = (id: keyof typeof teamIdToName): string => {
+  return teamIdToName[id];
 };
 
-export const getClubIdByName = (name: (typeof clubIdToName)[number]): NcalfClubID => {
-  const entry = Object.entries(clubIdToName).find(([, clubName]) => clubName === name);
+export const getTeamIdByName = (name: (typeof teamIdToName)[number]): TeamID => {
+  const entry = Object.entries(teamIdToName).find(([, clubName]) => clubName === name);
   if (!entry) throw new Error(`Club name ${name} not found`);
-  return Number(entry[0]) as NcalfClubID;
+  return Number(entry[0]) as TeamID;
 };
 
-export const shortenedTeamIdToName = {
+export const shortenedClubIdToName = {
   Ade: "Adelaide Crows",
   Bris: "Brisbane Lions",
   Carl: "Carlton Blues",
   Coll: "Collingwood Magpies",
   Ess: "Essendon Bombers",
-  WB: "Western Bulldogs",
   Fre: "Fremantle Dockers",
   Geel: "Geelong Cats",
   GC: "Gold Coast Suns",
-  GWS: "Greater Western Sydney Giants",
+  GWS: "GWS Giants",
   Haw: "Hawthorn Hawks",
   Melb: "Melbourne Demons",
   NM: "North Melbourne Kangaroos",
-  PA: "Port Adelaide Power",
+  PA: "Port Adelaide",
   Rich: "Richmond Tigers",
   StK: "St Kilda Saints",
   Syd: "Sydney Swans",
   WC: "West Coast Eagles",
+  WB: "Western Bulldogs",
 } as const;
 
-export const getTeamNameByShortenedName = (id: keyof typeof shortenedTeamIdToName): string => {
-  return shortenedTeamIdToName[id];
+export const getClubNameByShortenedName = (id: keyof typeof shortenedClubIdToName): string => {
+  return shortenedClubIdToName[id];
 };
 
 export function numberToPriceString(price: number | string): string {
+  console.log(price);
   if (typeof price === "string") {
     return `$${Number(price).toLocaleString("en-AU", { minimumFractionDigits: 2 })}`;
   }
   return `$${price.toLocaleString("en-AU", { minimumFractionDigits: 2 })}`;
 }
 
+export const shortenedPositions: Position[] = ["C", "D", "F", "OB", "RK", "ROOK"];
 export const shortenedPositionToName = {
   C: "Centre",
   D: "Defender",
@@ -78,10 +80,13 @@ export const shortenedPositionToName = {
   ROOK: "Rookie",
   none: "None Selected",
   loading: "Loading",
-};
+} as const;
 
 export function getPositionNameByShortenedName(position: keyof typeof shortenedPositionToName): string {
   return shortenedPositionToName[position];
+}
+export function getPositionCapitalNameByShortenedName(position: keyof typeof shortenedPositionToName): string {
+  return shortenedPositionToName[position].toUpperCase();
 }
 
 export function getShortenedPositionName(position: keyof typeof shortenedPositionToName): string {

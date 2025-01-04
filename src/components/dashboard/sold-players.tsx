@@ -18,18 +18,16 @@ const columnDefs: ColDef[] = [
     flex: 2,
   },
   {
-    field: "posn",
+    field: "Position",
     headerName: "Pos",
     flex: 0.8,
   },
   {
-    field: "club",
-    headerName: "Club",
+    field: "Club",
     flex: 0.9,
   },
   {
-    field: "price",
-    headerName: "Price",
+    field: "Price",
     valueFormatter: (params: { value: string }) => `$${params.value}`,
   },
 ];

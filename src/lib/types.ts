@@ -1,7 +1,8 @@
-export type Position = "C" | "D" | "F" | "OB" | "RK"; // the possible positions
-export type PositionState = Position | "ROOK" | "none"; // the possible value that the position filter could hold
-export type NcalfClubID = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11; // the possible club ids
-export type AFLTeamAbbreviations =
+export type Position = "C" | "D" | "F" | "OB" | "RK" | "ROOK"; // the possible positions
+export type PositionFilterValues = "C" | "D" | "F" | "OB" | "RK";
+export type PositionState = Position | undefined; // the possible value that the position filter could hold
+export type TeamID = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11; // the possible club ids
+export type AFLClub =
   | "Ade"
   | "Bris"
   | "Carl"
@@ -36,29 +37,33 @@ export interface PlayerSeasonStats {
 }
 
 export interface TeamStats {
-  ncalfclubid: NcalfClubID;
-  C: number;
-  D: number;
-  F: number;
-  RK: number;
-  OB: number;
-  sum_price: string;
+  TeamID: TeamID;
+  c: number;
+  d: number;
+  f: number;
+  rk: number;
+  ob: number;
+  SumPrice: string;
 }
 
 export interface SoldPlayer {
   FirstName: string;
   PlayerSeasonID: number;
   Surname: string;
-  club: AFLTeamAbbreviations;
-  posn: Position;
-  price: string;
+  Club: AFLClub;
+  Position: Position;
+  Price: string;
 }
 
 export interface UnsoldPlayer extends PlayerSeasonStats {
   FirstName: string;
   PlayerSeasonID: number;
   Surname: string;
-  club: AFLTeamAbbreviations;
-  posn: Position;
-  price: string;
+  Club: AFLClub;
+  Position: Position;
+  Price: string;
+}
+
+export interface PlayerStat extends PlayerSeasonStats {
+  Season: 2024;
 }

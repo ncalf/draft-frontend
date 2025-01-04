@@ -1,13 +1,13 @@
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { useClubPlayersQuery, useClubsStatsQuery } from "@/lib/queries";
+import { useTeamPlayersQuery, useTeamStatsQuery } from "@/lib/queries";
 import {
-  getClubNameById,
+  getClubNameByShortenedName,
   getPositionNameByShortenedName,
-  getTeamNameByShortenedName,
+  getTeamNameById,
   numberToPriceString,
 } from "@/lib/shelf";
-import { AFLTeamAbbreviations, NcalfClubID, Position } from "@/lib/types";
+import { AFLClub, Position, TeamID } from "@/lib/types";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { ColDef } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
@@ -17,10 +17,10 @@ import { Input } from "../ui/input";
 
 const clubsColumnDefs: ColDef[] = [
   {
-    field: "ncalfclubid",
-    headerName: "Club",
+    field: "TeamID",
+    headerName: "Team",
     flex: 2.5,
-    cellRenderer: (params: { value: NcalfClubID }) => <ClubDialog clubID={params.value} />,
+    cellRenderer: (params: { value: TeamID }) => <ClubDialog clubID={params.value} />,
   },
   { field: "C" },
   { field: "D" },
@@ -28,7 +28,7 @@ const clubsColumnDefs: ColDef[] = [
   { field: "RK" },
   { field: "OB" },
   {
-    field: "sum_price",
+    field: "SumPrice",
     headerName: "Price",
     flex: 1,
     valueFormatter: (params: { value: string }) => numberToPriceString(params.value),
@@ -36,7 +36,7 @@ const clubsColumnDefs: ColDef[] = [
 ];
 
 export function ClubTableCard() {
-  const { isLoading, data, error } = useClubsStatsQuery();
+  const { isLoading, data, error } = useTeamStatsQuery();
 
   if (error) {
     toast.error("Failed to fetch club stats");
@@ -63,20 +63,19 @@ const playersColumnDefs: ColDef[] = [
     flex: 0.5,
   },
   {
-    field: "fullName",
+    field: "FullName",
     headerName: "Name",
     valueGetter: (params: Params) => `${params.data.FirstName} ${params.data.Surname}`,
     flex: 1.5,
   },
   {
-    field: "club",
-    headerName: "Team",
-    valueFormatter: (params: { value: string }) => getTeamNameByShortenedName(params.value as AFLTeamAbbreviations),
+    field: "Club",
+    headerName: "Club",
+    valueFormatter: (params: { value: string }) => getClubNameByShortenedName(params.value as AFLClub),
     flex: 1.5,
   },
   {
-    field: "posn",
-    headerName: "Position",
+    field: "Position",
     valueFormatter: (params: { value: string }) => getPositionNameByShortenedName(params.value as Position),
   },
   {
@@ -86,11 +85,9 @@ const playersColumnDefs: ColDef[] = [
     flex: 0.5,
   },
 ];
-function ClubDialog({ clubID: clubID }: { clubID: NcalfClubID }) {
-  const { isLoading, data, error } = useClubPlayersQuery(clubID);
+function ClubDialog({ clubID: clubID }: { clubID: TeamID }) {
+  const { isLoading, data, error } = useTeamPlayersQuery(clubID);
   const [searchText, setSearchText] = useState("");
-
-  console.log(clubID);
 
   if (error) {
     toast.error("Failed to fetch club players");
@@ -99,7 +96,7 @@ function ClubDialog({ clubID: clubID }: { clubID: NcalfClubID }) {
   return (
     <Dialog>
       <DialogTrigger>
-        <span className="cursor-pointer">{getClubNameById(clubID)}</span>
+        <span className="cursor-pointer">{getTeamNameById(clubID)}</span>
       </DialogTrigger>
       <VisuallyHidden.Root>
         <DialogTitle>{clubID}</DialogTitle>

@@ -12,11 +12,21 @@ import { AgGridReact } from "ag-grid-react";
 import { User } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { create } from "zustand";
+
+interface UnsoldPlayerStore {
+  open: boolean;
+}
+const useUnsoldPlayerStore = create<UnsoldPlayerStore>()(() => ({
+  open: false,
+}));
 
 export function UnsoldPlayersCard() {
+  const open = useUnsoldPlayerStore((state) => state.open);
+
   return (
     <Card className="col-start-9 col-end-11 row-start-4 row-end-5 p-2">
-      <Dialog>
+      <Dialog open={open} onOpenChange={(open) => useUnsoldPlayerStore.setState({ open })}>
         <DialogTrigger asChild>
           <Button className="h-full w-full bg-gray-300 text-2xl font-semibold hover:bg-gray-200" variant={"outline"}>
             Unsold Players
@@ -108,7 +118,14 @@ const columnDefs: ColDef[] = [
     headerName: "-",
     flex: 0.5,
     cellRenderer: (params: Params) => (
-      <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => console.log(params.data)}>
+      <Button
+        variant="ghost"
+        className="h-8 w-8 p-0"
+        onClick={() => {
+          useDashboardStore.setState({ currentPlayer: params.data.PlayerSeasonID });
+          useUnsoldPlayerStore.setState({ open: false });
+        }}
+      >
         <User className="h-4 w-4" />
       </Button>
     ),
