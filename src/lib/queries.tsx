@@ -28,7 +28,7 @@ export function useTeamStatsQuery() {
   return useQuery({
     queryKey: ["teamStats", SEASON],
     queryFn: async () => {
-      const response = await fetch(`${BACKEND_IP}/teams/stats${SEASON}`);
+      const response = await fetch(`${BACKEND_IP}/teams/stats/${SEASON}`);
       const teamStats: TeamsStatsAPIResponse = await response.json();
 
       const rowData = Object.entries(teamStats).map(([teamId, teamData]) => ({
