@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton"; // Import Skeleton component
-import { usePlayerNameQuery, usePlayerStatsQuery, useUnsoldPlayersQuery } from "@/lib/queries"; // Import useUnsoldPlayersQuery
+import { SEASON, usePlayerNameQuery, usePlayerStatsQuery, useUnsoldPlayersQuery } from "@/lib/queries"; // Import useUnsoldPlayersQuery
 import { getClubNameByShortenedName } from "@/lib/shelf";
 import { useDashboardStore } from "@/lib/store";
 import { AFLClub } from "@/lib/types";
@@ -19,7 +19,7 @@ export function PlayerInfoCard() {
 
   const playerClub: AFLClub = unsoldPlayers?.find((player) => player.PlayerSeasonID === currentPlayer)?.Club as AFLClub;
 
-  const imageUrl = `http://${import.meta.env.VITE_BACKEND_IP}/ncalf/draft/player/image/2024/${currentPlayer}`;
+  const imageUrl = `http://${import.meta.env.VITE_BACKEND_IP}/ncalf/draft/player/image/${SEASON}/${currentPlayer}`;
   return (
     <Card className="col-start-1 col-end-9 row-start-9 row-end-13 p-2 flex flex-row">
       {currentPlayer ? (
