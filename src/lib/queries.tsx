@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { PositionState, UnsoldPlayer } from "./types";
+import { PlayerStat, PositionState, SoldPlayer, TeamID, TeamStats, UnsoldPlayer } from "./types";
 
 export const BACKEND_IP = `http://${import.meta.env.VITE_BACKEND_IP}/ncalf/draft`;
 export const SEASON = "2025";
@@ -28,7 +28,7 @@ export function useTeamStatsQuery() {
   return useQuery({
     queryKey: ["teamStats", SEASON],
     queryFn: async () => {
-      const response = await fetch(`${BACKEND_IP}/teams/stats/2024`);
+      const response = await fetch(`${BACKEND_IP}/teams/${SEASON}`);
       const teamStats: TeamStats[] = await response.json();
 
       return teamStats;
@@ -40,7 +40,7 @@ export function useTeamPlayersQuery(clubId: TeamID) {
   return useQuery({
     queryKey: ["teamPlayers", clubId, SEASON],
     queryFn: async () => {
-      const response = await fetch(`${BACKEND_IP}/players/sold/2024/${clubId}`);
+      const response = await fetch(`${BACKEND_IP}/players/sold/${SEASON}/${clubId}`);
       const players: SoldPlayer[] = await response.json();
 
       return players;
@@ -52,7 +52,7 @@ export function useSoldPlayersQuery() {
   return useQuery({
     queryKey: ["soldPlayers", SEASON],
     queryFn: async () => {
-      const response = await fetch(`${BACKEND_IP}/players/sold/2024`);
+      const response = await fetch(`${BACKEND_IP}/players/sold/${SEASON}`);
       const players: SoldPlayer[] = await response.json();
 
       return players;
@@ -68,7 +68,7 @@ export function usePlayerNameQuery(seasonID: number | undefined) {
         return { FirstName: "", Surname: "" };
       }
 
-      const response = await fetch(`${BACKEND_IP}/player/name/2024/${seasonID}`);
+      const response = await fetch(`${BACKEND_IP}/player/name/${SEASON}/${seasonID}`);
       const playerNames: { FirstName: string; Surname: string } = await response.json();
 
       return playerNames;
@@ -84,7 +84,7 @@ export function usePlayerStatsQuery(seasonID: number | undefined) {
         return [];
       }
 
-      const response = await fetch(`${BACKEND_IP}/player/stats/2024/${seasonID}`);
+      const response = await fetch(`${BACKEND_IP}/player/stats/${SEASON}/${seasonID}`);
       const playerStats: PlayerStat[] = await response.json();
 
       return playerStats;
