@@ -16,6 +16,8 @@ dist-ssr
 api_tests
 
 .env
+.next
+next-env.d.ts
 
 # Editor directories and files
 .vscode
