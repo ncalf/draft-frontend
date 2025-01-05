@@ -32,4 +32,4 @@ The drafting website is built with react, with shadcn ui's premade components an
 | `/player/undosale`                | PUT         | Undoes the sale of a player to a team. Payload: `{"season": (current_season), "player_season_id": (id)}`                                                             |
 | `/updatecurrentposition`          | PUT         | Updates the current position. Payload: `{"new_position": (new_position)}`                                                                                            |
 | `/player/updaterookieposition`    | PUT         | Updates the position for a rookie. Payload: `{"player_id": (player_season_id), "season": (current_season), "position": (position)}`                                  |
-| `/player/marknominated`           | PUT         | Marks a player as nominated. Payload: `{"player_id": (player_season_id), "season": (current_season)}`                                                                |
+| `/player/marknominated`           | PUT         | Marks a player as nominated. Payload: `{"player_id": (player_season_id), "season": (current_season), "position": (position)}`                                        |

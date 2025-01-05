@@ -1,13 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
-import { PlayerStat, PositionState, SoldPlayer, TeamID, TeamStats, UnsoldPlayer } from "./types";
+import { useDashboardStore } from "./store";
+import { PlayerStat, SoldPlayer, TeamID, TeamStats, UnsoldPlayer } from "./types";
 
 export const BACKEND_IP = `http://${import.meta.env.VITE_BACKEND_IP}/ncalf/draft`;
 export const SEASON = "2025";
 
-export function useUnsoldPlayersQuery(position: PositionState) {
+export function useUnsoldPlayersQuery() {
   return useQuery({
-    queryKey: ["unsoldPlayers", position],
+    queryKey: ["unsoldPlayers", useDashboardStore.getState().position],
     queryFn: async () => {
+      const position = useDashboardStore.getState().position;
+      if (position === undefined) {
+        return [];
+      }
+
       let unsoldPlayers: UnsoldPlayer[] = []; // default value
 
       // if the position is none, then we don't need to fetch the data
@@ -60,10 +66,11 @@ export function useSoldPlayersQuery() {
   });
 }
 
-export function usePlayerNameQuery(seasonID: number | undefined) {
+export function usePlayerNameQuery() {
   return useQuery({
-    queryKey: ["playerName", seasonID],
+    queryKey: ["playerName", useDashboardStore.getState().currentPlayer],
     queryFn: async () => {
+      const seasonID = useDashboardStore.getState().currentPlayer;
       if (seasonID === undefined) {
         return { FirstName: "", Surname: "" };
       }

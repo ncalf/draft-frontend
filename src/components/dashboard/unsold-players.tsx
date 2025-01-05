@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { useMarkPlayerNominatedMutation } from "@/lib/mutations";
 import { useUnsoldPlayersQuery } from "@/lib/queries";
 import { useDashboardStore } from "@/lib/store";
 import { UnsoldPlayer } from "@/lib/types";
@@ -45,96 +46,99 @@ export function UnsoldPlayersCard() {
 }
 
 type Params = { data: UnsoldPlayer };
-const columnDefs: ColDef[] = [
-  {
-    field: "PlayerSeasonID",
-    headerName: "ID",
-  },
-  {
-    field: "fullName",
-    headerName: "Name",
-    valueGetter: (params: Params) => `${params.data.FirstName} ${params.data.Surname}`,
-    flex: 1,
-    cellClass: "text-left",
-    sortable: false,
-    filter: true,
-  },
-  {
-    field: "posn",
-    headerName: "Position",
-    flex: 0.7,
-    sortable: false,
-    filter: true,
-  },
-  {
-    field: "Club",
-    headerName: "Club",
-    flex: 0.7,
-    sortable: false,
-    filter: true,
-  },
-  {
-    field: "gms",
-    headerName: "GMS",
-  },
-  {
-    field: "sk",
-    headerName: "K",
-  },
-  {
-    field: "sm",
-    headerName: "M",
-  },
-  {
-    field: "shb",
-    headerName: "HB",
-  },
-  {
-    field: "sff",
-    headerName: "FF",
-  },
-  {
-    field: "sfa",
-    headerName: "FA",
-  },
-  {
-    field: "sg",
-    headerName: "G",
-  },
-  {
-    field: "sb",
-    headerName: "B",
-  },
-  {
-    field: "sho",
-    headerName: "HO",
-  },
-  {
-    field: "st",
-    headerName: "T",
-  },
-  {
-    field: "actions",
-    headerName: "-",
-    flex: 0.5,
-    cellRenderer: (params: Params) => (
-      <Button
-        variant="ghost"
-        className="h-8 w-8 p-0"
-        onClick={() => {
-          useDashboardStore.setState({ currentPlayer: params.data.PlayerSeasonID });
-          useUnsoldPlayerStore.setState({ open: false });
-        }}
-      >
-        <User className="h-4 w-4" />
-      </Button>
-    ),
-  },
-];
+
 const UnsoldPlayersModalContent = () => {
-  const position = useDashboardStore((state) => state.position);
-  const { isLoading, data, error } = useUnsoldPlayersQuery(position);
+  const { isLoading, data, error } = useUnsoldPlayersQuery();
   const [searchText, setSearchText] = useState("");
+  const mutation = useMarkPlayerNominatedMutation();
+
+  const columnDefs: ColDef[] = [
+    {
+      field: "PlayerSeasonID",
+      headerName: "ID",
+    },
+    {
+      field: "fullName",
+      headerName: "Name",
+      valueGetter: (params: Params) => `${params.data.FirstName} ${params.data.Surname}`,
+      flex: 1,
+      cellClass: "text-left",
+      sortable: false,
+      filter: true,
+    },
+    {
+      field: "posn",
+      headerName: "Position",
+      flex: 0.7,
+      sortable: false,
+      filter: true,
+    },
+    {
+      field: "Club",
+      headerName: "Club",
+      flex: 0.7,
+      sortable: false,
+      filter: true,
+    },
+    {
+      field: "gms",
+      headerName: "GMS",
+    },
+    {
+      field: "sk",
+      headerName: "K",
+    },
+    {
+      field: "sm",
+      headerName: "M",
+    },
+    {
+      field: "shb",
+      headerName: "HB",
+    },
+    {
+      field: "sff",
+      headerName: "FF",
+    },
+    {
+      field: "sfa",
+      headerName: "FA",
+    },
+    {
+      field: "sg",
+      headerName: "G",
+    },
+    {
+      field: "sb",
+      headerName: "B",
+    },
+    {
+      field: "sho",
+      headerName: "HO",
+    },
+    {
+      field: "st",
+      headerName: "T",
+    },
+    {
+      field: "actions",
+      headerName: "-",
+      flex: 0.5,
+      cellRenderer: (params: Params) => (
+        <Button
+          variant="ghost"
+          className="h-8 w-8 p-0"
+          onClick={() => {
+            useDashboardStore.setState({ currentPlayer: params.data.PlayerSeasonID });
+            useUnsoldPlayerStore.setState({ open: false });
+            mutation.mutate(params.data.PlayerSeasonID);
+          }}
+        >
+          <User className="h-4 w-4" />
+        </Button>
+      ),
+    },
+  ];
 
   if (error) {
     toast.error("Failed to fetch unsold players");

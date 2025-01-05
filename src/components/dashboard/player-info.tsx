@@ -10,9 +10,8 @@ import { toast } from "sonner";
 
 export function PlayerInfoCard() {
   const currentPlayer = useDashboardStore((state) => state.currentPlayer);
-  const position = useDashboardStore((state) => state.position);
-  const { data, error } = usePlayerNameQuery(currentPlayer);
-  const { data: unsoldPlayers } = useUnsoldPlayersQuery(position);
+  const { data, error } = usePlayerNameQuery();
+  const { data: unsoldPlayers } = useUnsoldPlayersQuery();
   if (error) {
     toast.error("Failed to fetch player name");
   }

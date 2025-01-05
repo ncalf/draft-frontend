@@ -1,31 +1,45 @@
 import { Card } from "@/components/ui/card";
+import { useUnsoldPlayersQuery } from "@/lib/queries";
 import { GaugeComponent } from "react-gauge-component";
+import { toast } from "sonner";
 
 export function RemainingPlayersCard() {
-  const playerremaningfillin = 800;
+  const { isLoading, data, error } = useUnsoldPlayersQuery();
+  const numberOfPlayers = data?.length ?? 0;
+  const numberOfUnnominatedPlayers = data?.filter((player) => player.nominated === 0).length ?? 0;
+  const maxPlayers = numberOfPlayers > 0 ? numberOfPlayers : 1;
+  const displayUnnominated = Math.min(numberOfUnnominatedPlayers, maxPlayers);
+
+  if (error) {
+    toast.error("Failed to fetch club stats");
+  }
 
   return (
-    <Card className="fex col-start-9 col-end-11 row-start-1 row-end-4 flex-col p-2 overflow-hidden">
-      {/* TODO: Make the maxvalue the player remaining */}
+    <Card className="flex col-start-9 col-end-11 row-start-1 row-end-4 flex-col p-2 overflow-hidden">
       <GaugeComponent
         type="semicircle"
-        minValue={0}
-        maxValue={playerremaningfillin}
+        value={displayUnnominated}
+        maxValue={maxPlayers}
         arc={{
-          subArcs: [
-            { color: "#EA4228", length: 0.1 },
-            { color: "#F5CD19", length: 0.2 },
-            { color: "#5BE12C", length: 0.5 },
-          ],
+          nbSubArcs: isLoading ? 1 : 3,
+          subArcs: isLoading
+            ? [{ color: "#AFAFAF", length: 1 }]
+            : [
+                { color: "#EA4228", length: 0.1 },
+                { color: "#F5CD19", length: 0.2 },
+                { color: "#5BE12C", length: 0.5 },
+              ],
         }}
         labels={{
           valueLabel: {
-            formatTextValue: (value) => `${value}/${playerremaningfillin}`,
+            hide: isLoading,
+            formatTextValue: (value) => `${value}/${numberOfPlayers}`,
             style: { fill: "#000000", textShadow: "none", fontWeight: "normal", marginTop: "-20px" },
           },
           tickLabels: { defaultTickValueConfig: { hide: true }, defaultTickLineConfig: { hide: true } },
         }}
         marginInPercent={{ left: 0.01, right: 0.01, top: 0.07, bottom: 0.0 }}
+        pointer={{ animate: !isLoading }}
       />
       <div className="scroll-m-20 text-2xl font-semibold tracking-tight text-center">Players Remaining</div>
     </Card>

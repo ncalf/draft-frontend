@@ -62,6 +62,8 @@ export interface UnsoldPlayer extends PlayerSeasonStats {
   Club: AFLClub;
   Position: Position;
   Price: string;
+  availableforsale: 0 | 1;
+  nominated: 0 | 1;
 }
 
 export interface PlayerStat extends PlayerSeasonStats {

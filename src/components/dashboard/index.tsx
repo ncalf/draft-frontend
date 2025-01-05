@@ -7,6 +7,7 @@ import { SoldPlayerCard } from "./sold-players";
 import { ClubTableCard } from "./team-table";
 import { UnsoldPlayersCard } from "./unsold-players";
 
+// main component fed to the router, contains all the cards
 export default function Dashboard() {
   return (
     <div className="h-screen bg-gray-700 p-2">

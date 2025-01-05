@@ -24,7 +24,7 @@ export function MVPsCard() {
     toast.error("Failed to fetch sold players");
   }
 
-  const topPlayers = data?.sort((a, b) => Number(b.Price) - Number(a.Price)).slice(0, 5);
+  const topPlayers = data?.sort((a, b) => Number(b.Price) - Number(a.Price)).slice(0, 5); // sort by price and get top 5
 
   return (
     <Card className="col-start-9 col-end-11 row-start-5 row-end-9 overflow-hidden">
