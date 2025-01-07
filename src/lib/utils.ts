@@ -1,4 +1,11 @@
-import { AFLClub, shortenedClubIdToName, TeamID, teamIDs } from "./types";
+import {
+  AFLClub,
+  Position,
+  shortenedClubIdToName,
+  shortPositionsToPosition,
+  TeamID,
+  teamIDs,
+} from "./types";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -19,4 +26,15 @@ export function numberToPriceString(price: number | string): string {
     price = parseFloat(price);
   }
   return `$${price.toLocaleString("en-AU", { minimumFractionDigits: 2 })}`;
+}
+
+export function positionShortenedNameToFullName(
+  shortName: string,
+  capital?: boolean
+): string {
+  const position = shortPositionsToPosition[shortName as Position];
+  if (capital) {
+    return position.toUpperCase();
+  }
+  return position;
 }

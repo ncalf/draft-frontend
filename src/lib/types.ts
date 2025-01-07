@@ -1,3 +1,12 @@
+export const shortPositionsToPosition = {
+  C: "Centre",
+  D: "Defender",
+  F: "Forward",
+  OB: "Onballer",
+  RK: "Ruck",
+  ROOK: "Rookie",
+} as const;
+
 export const positions = ["C", "D", "F", "OB", "RK", "ROOK"] as const;
 export type Position = (typeof positions)[number];
 export type PositionState = Position | undefined;
@@ -56,6 +65,7 @@ export interface UnsoldPlayer {
   b: number;
   ho: number;
   t: number;
+  nominated: boolean;
 }
 
 export interface TeamStats {

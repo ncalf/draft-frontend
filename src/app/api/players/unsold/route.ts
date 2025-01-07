@@ -37,6 +37,7 @@ const query = db
     b: sql`COALESCE(SUM(${stats.b}), 0)`,
     ho: sql`COALESCE(SUM(${stats.ho}), 0)`,
     t: sql`COALESCE(SUM(${stats.t}), 0)`,
+    nominated: draftPlayers.nominated,
   })
   .from(draftPlayers)
   .leftJoin(

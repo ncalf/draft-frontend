@@ -49,7 +49,7 @@ export function SoldPlayerCard() {
   }
 
   return (
-    <Card className="col-start-6 col-end-9 row-start-1 row-end-9 space-y-1.5 overflow-hidden p-2 flex flex-col ">
+    <Card className="col-start-6 col-end-9 row-start-1 row-end-9 space-y-1.5 overflow-hidden p-2 flex flex-col">
       <div className="scroll-m-20 text-3xl font-semibold tracking-tight text-center">
         Sold Players
       </div>

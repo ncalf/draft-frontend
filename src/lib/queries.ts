@@ -4,6 +4,14 @@ import { useDashboardStore } from "./store";
 
 const SEASON = process.env.NEXT_PUBLIC_SEASON;
 
+async function handleResponse(response: Response) {
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.errors || "API request failed");
+  }
+  return response.json();
+}
+
 export function useUnsoldPlayersQuery() {
   return useQuery<UnsoldPlayer[]>({
     queryKey: ["unsoldPlayers", useDashboardStore.getState().position],
@@ -18,7 +26,7 @@ export function useUnsoldPlayersQuery() {
         `/api/players/unsold/?position=${position}&season=${SEASON}&years=5`
       );
 
-      return await response.json();
+      return await handleResponse(response);
     },
   });
 }
@@ -28,7 +36,8 @@ export function useTeamStatsQuery() {
     queryKey: ["teamStats", SEASON],
     queryFn: async () => {
       const response = await fetch(`/api/teams/stats/?season=${SEASON}`);
-      return await response.json();
+
+      return await handleResponse(response);
     },
   });
 }
@@ -40,7 +49,8 @@ export function useTeamPlayersQuery(teamID: TeamID) {
       const response = await fetch(
         `/api/teams/players/?teamID=${teamID}&season=${SEASON}`
       );
-      return await response.json();
+
+      return await handleResponse(response);
     },
   });
 }
@@ -50,7 +60,8 @@ export function useSoldPlayersQuery() {
     queryKey: ["soldPlayers", SEASON],
     queryFn: async () => {
       const response = await fetch(`/api/players/sold/?season=${SEASON}`);
-      return await response.json();
+
+      return await handleResponse(response);
     },
   });
 }
