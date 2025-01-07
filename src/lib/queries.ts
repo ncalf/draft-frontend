@@ -1,5 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { UnsoldPlayer, TeamStats, TeamPlayer, TeamID } from "./types";
+import {
+  UnsoldPlayer,
+  TeamStats,
+  TeamPlayer,
+  TeamID,
+  PlayerInfo,
+} from "./types";
 import { useDashboardStore } from "./store";
 
 const SEASON = process.env.NEXT_PUBLIC_SEASON;
@@ -60,6 +66,25 @@ export function useSoldPlayersQuery() {
     queryKey: ["soldPlayers", SEASON],
     queryFn: async () => {
       const response = await fetch(`/api/players/sold/?season=${SEASON}`);
+
+      return await handleResponse(response);
+    },
+  });
+}
+
+export function usePlayerInfoQuery() {
+  return useQuery<PlayerInfo>({
+    queryKey: ["playerInfo", useDashboardStore.getState().currentPlayer],
+    queryFn: async () => {
+      const currentPlayer = useDashboardStore.getState().currentPlayer;
+
+      if (!currentPlayer) {
+        return null;
+      }
+
+      const response = await fetch(
+        `/api/player/info/?playerSeasonID=${currentPlayer}&season=${SEASON}&years=5`
+      );
 
       return await handleResponse(response);
     },

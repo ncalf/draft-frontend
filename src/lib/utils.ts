@@ -18,6 +18,7 @@ export function teamIDToName(teamID: TeamID): string {
 }
 
 export function clubShortenedNameToFullName(shortName: string): string {
+  console.log(shortName);
   return shortenedClubIdToName[shortName as AFLClub];
 }
 

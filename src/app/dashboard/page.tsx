@@ -1,8 +1,10 @@
 "use client";
 
 import { MVPsCard } from "@/components/dashboard/mvps";
+import { PlayerInfoCard } from "@/components/dashboard/player-info";
 import { PositionFilterCard } from "@/components/dashboard/position-filter";
 import { RemainingPlayersCard } from "@/components/dashboard/remaining-players";
+import { SellOrGenerateCard } from "@/components/dashboard/sell-or-generate";
 import { SoldPlayerCard } from "@/components/dashboard/sold-players";
 import { TeamTableCard } from "@/components/dashboard/teams-table";
 import { UnsoldPlayersCard } from "@/components/dashboard/unsold-players";
@@ -20,8 +22,8 @@ export default function Dashboard() {
         <PositionFilterCard />
         <UnsoldPlayersCard />
 
-        {/* <PlayerInfoCard /> */}
-        {/* <SellOrGenerateCard /> */}
+        <PlayerInfoCard />
+        <SellOrGenerateCard />
       </div>
     </div>
   );

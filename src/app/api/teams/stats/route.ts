@@ -8,8 +8,8 @@ import { TeamStats } from "@/lib/types";
 const SearchParamsSchema = z.object({
   season: z
     .string()
-    .regex(/^\d{4}$/, { message: "Season must be a valid year (e.g., 2023)." })
-    .nonempty({ message: "Season is required." }),
+    .regex(/^\d{4}$/)
+    .nonempty(),
 });
 
 const query = db

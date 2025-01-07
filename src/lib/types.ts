@@ -86,3 +86,23 @@ export interface TeamPlayer {
   position: Position;
   price: string;
 }
+
+export interface PlayerInfo {
+  name: string;
+  club: string;
+  stats: PlayerStats[];
+}
+
+interface PlayerStats {
+  season: number;
+  club: string;
+  k: number;
+  m: number;
+  hb: number;
+  ff: number;
+  fa: number;
+  g: number;
+  b: number;
+  ho: number;
+  t: number;
+}

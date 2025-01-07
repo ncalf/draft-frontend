@@ -11,10 +11,7 @@ const SearchParamsSchema = z.object({
     .string()
     .regex(/^\d{4}$/)
     .nonempty(),
-  years: z.preprocess(
-    (val) => parseInt(val as string, 10),
-    z.number().int().gt(0)
-  ),
+  years: z.preprocess((val) => parseInt(val as string), z.number().int().gt(0)),
 });
 
 const query = db
