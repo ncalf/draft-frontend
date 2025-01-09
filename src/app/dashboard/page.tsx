@@ -8,6 +8,9 @@ import { SellOrGenerateCard } from "@/components/dashboard/sell-or-generate";
 import { SoldPlayerCard } from "@/components/dashboard/sold-players";
 import { TeamTableCard } from "@/components/dashboard/teams-table";
 import { UnsoldPlayersCard } from "@/components/dashboard/unsold-players";
+import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
+
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 // main component fed to the router, contains all the cards
 export default function Dashboard() {

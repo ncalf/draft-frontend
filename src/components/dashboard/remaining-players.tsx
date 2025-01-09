@@ -60,9 +60,10 @@ export function RemainingPlayersCard() {
         }}
         marginInPercent={{ left: 0.01, right: 0.01, top: 0.07, bottom: 0.0 }}
         pointer={{ animate: !isLoading }}
+        key={`gauge-${numberOfPlayers}-${displayUnnominated}`}
       />
       <div className="scroll-m-20 text-2xl font-semibold tracking-tight text-center">
-        Players Remaining
+        {isLoading ? "Loading..." : `Players Remaining`}
       </div>
     </Card>
   );

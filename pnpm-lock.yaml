@@ -65,6 +65,9 @@ importers:
       react-dom:
         specifier: ^19.0.0
         version: 19.0.0(react@19.0.0)
+      react-gauge-chart:
+        specifier: ^0.5.1
+        version: 0.5.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       react-gauge-component:
         specifier: ^1.2.62
         version: 1.2.62(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -2788,6 +2791,12 @@ packages:
     resolution: {integrity: sha512-4GV5sHFG0e/0AD4X+ySy6UJd3jVl1iNsNHdpad0qhABJ11twS3TTBnseqsKurKcsNqCEFeGL3uLpVChpIO3QfQ==}
     peerDependencies:
       react: ^19.0.0
+
+  react-gauge-chart@0.5.1:
+    resolution: {integrity: sha512-Kd0pLIfHWOVEWJCz+xAxFfrKzCdOkLHNKR13V+O3h06ocyGT7fWjz2oevMXsPt3bVn1Du2od7gPrjUhqXKdASg==}
+    peerDependencies:
+      react: ^16.8.2 || ^17.0 || ^18.x
+      react-dom: ^16.8.2 || ^17.0 || ^18.x
 
   react-gauge-component@1.2.62:
     resolution: {integrity: sha512-+m+N60urY7HN7BAmzSDGjtr7yo3ZLp+QXRK0oCpND04t155jouO1z+EULTY2bdkgraOPMTb12ZCAS8Gqpj0h7w==}
@@ -5880,6 +5889,12 @@ snapshots:
     dependencies:
       react: 19.0.0
       scheduler: 0.25.0
+
+  react-gauge-chart@0.5.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+    dependencies:
+      d3: 7.9.0
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
 
   react-gauge-component@1.2.62(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:

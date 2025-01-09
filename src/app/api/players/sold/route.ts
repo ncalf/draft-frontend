@@ -30,17 +30,15 @@ const query = db
 
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const season = searchParams.get("season");
+    const rawParams = Object.fromEntries(
+      request.nextUrl.searchParams.entries()
+    );
+    const parsedParams = SearchParamsSchema.parse(rawParams);
 
-    const parsedParams = SearchParamsSchema.parse({
-      season,
-    });
-
-    const parsedSeason = parseInt(parsedParams.season);
+    const season = parseInt(parsedParams.season);
 
     const unsoldPlayers = await query.execute({
-      season: parsedSeason,
+      season,
     });
 
     return NextResponse.json(unsoldPlayers);

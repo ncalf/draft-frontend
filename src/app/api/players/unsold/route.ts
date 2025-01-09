@@ -11,7 +11,10 @@ const SearchParamsSchema = z.object({
     .string()
     .regex(/^\d{4}$/)
     .nonempty(),
-  years: z.preprocess((val) => parseInt(val as string), z.number().int().gt(0)),
+  years: z
+    .string()
+    .regex(/^[1-9]\d*$/)
+    .nonempty(),
 });
 
 const query = db
@@ -57,25 +60,19 @@ const query = db
 
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const position = searchParams.get("position");
-    const season = searchParams.get("season");
-    const yearsParam = searchParams.get("years");
+    const rawParams = Object.fromEntries(
+      request.nextUrl.searchParams.entries()
+    );
+    const parsedParams = SearchParamsSchema.parse(rawParams);
 
-    const parsedParams = SearchParamsSchema.parse({
-      position,
-      season,
-      years: yearsParam,
-    });
-
-    const parsedPosition = parsedParams.position;
-    const parsedSeason = parseInt(parsedParams.season);
-    const years = parsedParams.years;
-    const seasonThreshold = parsedSeason - (years - 1);
+    const position = parsedParams.position;
+    const season = parseInt(parsedParams.season);
+    const years = parseInt(parsedParams.years);
+    const seasonThreshold = season - (years - 1);
 
     const unsoldPlayers = await query.execute({
-      position: parsedPosition,
-      season: parsedSeason,
+      position,
+      season,
       seasonThreshold,
     });
 

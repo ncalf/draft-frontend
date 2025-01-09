@@ -11,7 +11,7 @@ import {
   DialogDescription,
   DialogTitle,
   DialogTrigger,
-} from "../ui/dialog";
+} from "@/components/ui/dialog";
 
 interface SoldPlayerStore {
   open: boolean;
@@ -38,20 +38,20 @@ export function SellOrGenerateCard() {
 
 function SellButton() {
   return (
-    <Dialog open={useSoldPlayerStore.getState().open}>
+    <Dialog>
       <DialogTrigger asChild>
-        <Button
-          className="h-full w-full border bg-green-500 text-2xl hover:bg-green-400"
-          onClick={() => {}}
-        >
+        <Button className="h-full w-full border bg-green-500 text-2xl hover:bg-green-400">
           Sell Player
         </Button>
       </DialogTrigger>
-      <VisuallyHidden.Root>
-        <DialogTitle>Unsold Players</DialogTitle>
-        <DialogDescription>View all unsold players</DialogDescription>
-      </VisuallyHidden.Root>
-      <DialogContent className="h-[80vh] w-[90vw] max-w-[90vw] pt-10"></DialogContent>
+
+      <DialogContent className="h-[80vh] w-[90vw] max-w-[90vw] pt-10">
+        <VisuallyHidden.Root>
+          <DialogTitle>Unsold Players</DialogTitle>
+          <DialogDescription>View all unsold players</DialogDescription>
+        </VisuallyHidden.Root>
+        <div className="w-full h-full text-center">Hi</div>
+      </DialogContent>
     </Dialog>
   );
 }

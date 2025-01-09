@@ -31,21 +31,17 @@ const query = db
 
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const teamID = searchParams.get("teamID");
-    const season = searchParams.get("season");
+    const rawParams = Object.fromEntries(
+      request.nextUrl.searchParams.entries()
+    );
+    const parsedParams = SearchParamsSchema.parse(rawParams);
 
-    const parsedParams = SearchParamsSchema.parse({
-      teamID,
-      season,
-    });
-
-    const parsedTeamID = parseInt(parsedParams.teamID, 10);
-    const parsedSeason = parseInt(parsedParams.season, 10);
+    const teamID = parseInt(parsedParams.teamID, 10);
+    const season = parseInt(parsedParams.season, 10);
 
     const players = await query.execute({
-      teamID: parsedTeamID,
-      season: parsedSeason,
+      teamID,
+      season,
     });
 
     return NextResponse.json(players);

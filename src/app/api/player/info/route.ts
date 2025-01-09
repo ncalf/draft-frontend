@@ -9,11 +9,14 @@ const SearchParamsSchema = z.object({
     .string()
     .regex(/^\d{4}$/)
     .nonempty(),
-  playerSeasonID: z.preprocess(
-    (val) => parseInt(val as string),
-    z.number().int().gt(0).max(999)
-  ),
-  years: z.preprocess((val) => parseInt(val as string), z.number().int().gt(0)),
+  playerSeasonID: z
+    .string()
+    .regex(/^\d{1,3}$/)
+    .nonempty(),
+  years: z
+    .string()
+    .regex(/^[1-9]\d*$/)
+    .nonempty(),
 });
 
 const basicInfoQuery = db
@@ -54,28 +57,22 @@ const statsQuery = db
 
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const playerSeasonID = searchParams.get("playerSeasonID");
-    const season = searchParams.get("season");
-    const yearsParam = searchParams.get("years");
+    const rawParams = Object.fromEntries(
+      request.nextUrl.searchParams.entries()
+    );
+    const parsedParams = SearchParamsSchema.parse(rawParams);
 
-    const parsedParams = SearchParamsSchema.parse({
-      playerSeasonID,
-      season,
-      years: yearsParam,
-    });
-
-    const parsedPlayerSeasonID = parsedParams.playerSeasonID;
-    const parsedSeason = parseInt(parsedParams.season);
-    const years = parsedParams.years;
-    const seasonThreshold = parsedSeason - years;
+    const playerSeasonID = parsedParams.playerSeasonID;
+    const season = parseInt(parsedParams.season);
+    const years = parseInt(parsedParams.years);
+    const seasonThreshold = season - years;
 
     const [nameResult] = await basicInfoQuery.execute({
-      playerSeasonID: parsedPlayerSeasonID,
+      playerSeasonID,
     });
 
     const statsResult = await statsQuery.execute({
-      playerSeasonID: parsedPlayerSeasonID,
+      playerSeasonID,
       seasonThreshold,
     });
 

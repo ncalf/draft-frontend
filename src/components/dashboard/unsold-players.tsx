@@ -18,9 +18,7 @@ import { User } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { create } from "zustand";
-import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { UnsoldPlayer } from "@/lib/types";
-ModuleRegistry.registerModules([AllCommunityModule]);
 
 interface UnsoldPlayerStore {
   open: boolean;
@@ -46,11 +44,11 @@ export function UnsoldPlayersCard() {
             Unsold Players
           </Button>
         </DialogTrigger>
-        <VisuallyHidden.Root>
-          <DialogTitle>Unsold Players</DialogTitle>
-          <DialogDescription>View all unsold players</DialogDescription>
-        </VisuallyHidden.Root>
         <DialogContent className="h-[80vh] w-[90vw] max-w-[90vw] pt-10">
+          <VisuallyHidden.Root>
+            <DialogTitle>Unsold Players</DialogTitle>
+            <DialogDescription>View all unsold players</DialogDescription>
+          </VisuallyHidden.Root>
           <UnsoldPlayersModalContent />
         </DialogContent>
       </Dialog>
