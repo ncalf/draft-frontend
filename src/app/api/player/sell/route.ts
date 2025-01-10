@@ -14,7 +14,7 @@ const PayloadSchema = z.object({
     .string()
     .regex(/^\d{1,3}$/)
     .nonempty(),
-  position: z.enum(positions),
+  position: z.enum(positions).optional(),
   teamID: z
     .string()
     .regex(/^([1-9]|10|11)$/)
@@ -24,6 +24,17 @@ const PayloadSchema = z.object({
     .regex(/^\d+(\.\d{1,2})?$/)
     .nonempty(),
 });
+
+const positionQuery = db
+  .update(draftPlayers)
+  .set({ position: sql`${sql.placeholder("newPosition")}` })
+  .where(
+    and(
+      eq(draftPlayers.season, sql.placeholder("seasonPosition")),
+      eq(draftPlayers.playerSeasonID, sql.placeholder("playerSeasonIDPosition"))
+    )
+  )
+  .prepare();
 
 const query = db
   .update(draftPlayers)
@@ -42,8 +53,7 @@ const query = db
   .where(
     and(
       eq(draftPlayers.season, sql.placeholder("season")),
-      eq(draftPlayers.playerSeasonID, sql.placeholder("playerSeasonID")),
-      eq(draftPlayers.position, sql.placeholder("position"))
+      eq(draftPlayers.playerSeasonID, sql.placeholder("playerSeasonID"))
     )
   )
   .prepare();
@@ -53,6 +63,14 @@ export async function PATCH(request: NextRequest) {
     const body = await request.json();
     const parsed = PayloadSchema.parse(body);
     const { season, playerSeasonID, position, teamID, price } = parsed;
+
+    if (parsed.position) {
+      await positionQuery.execute({
+        newPosition: parsed.position,
+        seasonPosition: parsed.season,
+        playerSeasonIDPosition: parsed.playerSeasonID,
+      });
+    }
 
     await query.execute({
       teamID,

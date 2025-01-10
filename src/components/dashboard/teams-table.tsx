@@ -123,28 +123,26 @@ function TeamDialog({ teamID }: { teamID: TeamID }) {
             <DialogDescription>Club players</DialogDescription>
           </VisuallyHidden.Root>
         </DialogHeader>
-        <div className="h-full w-full">
-          <Input
-            placeholder="Search..."
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            className="mb-4"
-          />
-          <AgGridReact
-            quickFilterText={searchText}
-            columnDefs={playersColumnDefs}
-            rowData={data ?? []}
-            loading={isLoading}
-            defaultColDef={{
-              sortable: true,
-              resizable: false,
-              sortingOrder: ["desc", null],
-              flex: 1,
-              suppressMovable: true,
-            }}
-            suppressCellFocus={true}
-          />
-        </div>
+        <Input
+          placeholder="Search..."
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          className="mb-4"
+        />
+        <AgGridReact
+          quickFilterText={searchText}
+          columnDefs={playersColumnDefs}
+          rowData={data ?? []}
+          loading={isLoading}
+          defaultColDef={{
+            sortable: true,
+            resizable: false,
+            sortingOrder: ["desc", null],
+            flex: 1,
+            suppressMovable: true,
+          }}
+          suppressCellFocus={true}
+        />
       </DialogContent>
     </Dialog>
   );

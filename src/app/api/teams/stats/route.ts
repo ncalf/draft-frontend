@@ -45,16 +45,23 @@ export async function GET(request: NextRequest) {
 
     const rawTeamStats = await query.execute({ season: season });
 
-    const teamStats: TeamStats[] = rawTeamStats.map((stat) => ({
-      ...stat,
-      c: Number(stat.c),
-      d: Number(stat.d),
-      f: Number(stat.f),
-      ob: Number(stat.ob),
-      rk: Number(stat.rk),
-      rook: Number(stat.rook),
-      total_price: Number(stat.total_price),
-    }));
+    const allTeamIDs = Array.from({ length: 11 }, (_, i) => i + 1);
+
+    const statsMap = new Map(rawTeamStats.map((stat) => [stat.teamID, stat]));
+
+    const teamStats: TeamStats[] = allTeamIDs.map((id) => {
+      const stat = statsMap.get(id);
+      return {
+        teamID: id,
+        c: stat ? Number(stat.c) : 0,
+        d: stat ? Number(stat.d) : 0,
+        f: stat ? Number(stat.f) : 0,
+        ob: stat ? Number(stat.ob) : 0,
+        rk: stat ? Number(stat.rk) : 0,
+        rook: stat ? Number(stat.rook) : 0,
+        total_price: stat ? Number(stat.total_price) : 0,
+      };
+    });
 
     return NextResponse.json(teamStats);
   } catch (error) {

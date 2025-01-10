@@ -18,6 +18,7 @@ const query = db
     name: sql`CONCAT(${draftPlayers.firstName}, ' ', ${draftPlayers.surname})`,
     club: draftPlayers.club,
     price: draftPlayers.price,
+    team: draftPlayers.teamID,
   })
   .from(draftPlayers)
   .where(

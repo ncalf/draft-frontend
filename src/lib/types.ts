@@ -11,7 +11,7 @@ export const positions = ["C", "D", "F", "OB", "RK", "ROOK"] as const;
 export type Position = (typeof positions)[number];
 export type PositionState = Position | undefined;
 
-export const teamIDs: { [key: number]: string } = {
+export const teamIDsToName: { [key: number]: string } = {
   1: "Barnestoneworth United",
   2: "Berwick Blankets",
   3: "Bogong Bedouin",
@@ -25,7 +25,8 @@ export const teamIDs: { [key: number]: string } = {
   11: "Southern Squadron",
 };
 
-export type TeamID = keyof typeof teamIDs;
+export const teamsIDs = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] as const;
+export type TeamID = keyof typeof teamIDsToName;
 
 export const shortenedClubIdToName = {
   Ade: "Adelaide Crows",
@@ -80,11 +81,15 @@ export interface TeamStats {
 }
 
 export interface TeamPlayer {
-  playerSeasonId: number;
+  playerSeasonID: number;
   name: string;
   club: AFLClub;
   position: Position;
   price: string;
+}
+
+export interface SoldPlayer extends TeamPlayer {
+  teamID: TeamID;
 }
 
 export interface PlayerInfo {

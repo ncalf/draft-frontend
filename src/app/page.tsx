@@ -22,7 +22,7 @@ export default function LandingScreen() {
         <Button
           variant={"outline"}
           className="p-4 flex flex-row space-x-7 w-full h-full items-center justify-center"
-          onClick={() => router.push("/dashboard")} // Use router.push
+          onClick={() => router.push("/dashboard")}
         >
           <LayoutDashboard />
           Dashboard
@@ -30,7 +30,7 @@ export default function LandingScreen() {
         <Button
           variant={"outline"}
           className="p-4 flex flex-row space-x-7 w-full h-full items-center justify-center"
-          onClick={() => router.push("/team-view")} // Use router.push
+          onClick={() => router.push("/team-view")}
         >
           <BookUser />
           Team View

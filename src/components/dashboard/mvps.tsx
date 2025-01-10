@@ -3,6 +3,13 @@
 import { Card } from "@/components/ui/card";
 import { useSoldPlayersQuery } from "@/lib/queries";
 import { toast } from "sonner";
+import { AgGridReact } from "ag-grid-react";
+import { ColDef } from "ag-grid-community";
+
+const columnDefs: ColDef[] = [
+  { headerName: "Name", field: "name" },
+  { headerName: "Price", field: "price" },
+];
 
 export function MVPsCard() {
   const { isLoading, data, error } = useSoldPlayersQuery();
@@ -20,22 +27,21 @@ export function MVPsCard() {
       <div className="scroll-m-20 text-3xl font-semibold tracking-tight text-center">
         MVPs
       </div>
-      <div className="h-full flex flex-col">
-        {isLoading ? (
-          <div>Loading...</div>
-        ) : (
-          <ul className="divide-y flex-1 flex flex-col">
-            {topPlayers?.map((player) => (
-              <li
-                key={player.name}
-                className="flex justify-between w-full py-4 px-2 flex-1 items-center"
-              >
-                <span className="flex-1">{player.name}</span>
-                <span className="flex-1 text-right">${player.price}</span>
-              </li>
-            ))}
-          </ul>
-        )}
+      <div className="h-full w-full flex flex-col">
+        <AgGridReact
+          rowData={topPlayers}
+          columnDefs={columnDefs}
+          pagination={false}
+          defaultColDef={{
+            sortable: false,
+            filter: false,
+            resizable: false,
+            suppressMovable: true,
+            flex: 0.5,
+          }}
+          loading={isLoading}
+          suppressCellFocus={true}
+        />
       </div>
     </Card>
   );

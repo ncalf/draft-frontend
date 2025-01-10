@@ -5,6 +5,7 @@ import {
   TeamPlayer,
   TeamID,
   PlayerInfo,
+  SoldPlayer,
 } from "./types";
 import { useDashboardStore } from "./store";
 
@@ -62,7 +63,7 @@ export function useTeamPlayersQuery(teamID: TeamID) {
 }
 
 export function useSoldPlayersQuery() {
-  return useQuery<TeamPlayer[]>({
+  return useQuery<SoldPlayer[]>({
     queryKey: ["soldPlayers", SEASON],
     queryFn: async () => {
       const response = await fetch(`/api/players/sold/?season=${SEASON}`);

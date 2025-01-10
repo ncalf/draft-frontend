@@ -4,7 +4,7 @@ import {
   shortenedClubIdToName,
   shortPositionsToPosition,
   TeamID,
-  teamIDs,
+  teamIDsToName,
 } from "./types";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -14,7 +14,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function teamIDToName(teamID: TeamID): string {
-  return teamIDs[teamID];
+  return teamIDsToName[teamID];
 }
 
 export function clubShortenedNameToFullName(shortName: string): string {

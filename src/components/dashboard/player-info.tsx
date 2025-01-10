@@ -9,6 +9,8 @@ import { AgGridReact } from "ag-grid-react";
 import Image from "next/image";
 import { toast } from "sonner";
 
+const season = process.env.NEXT_PUBLIC_SEASON;
+
 export function PlayerInfoCard() {
   const currentPlayer = useDashboardStore((state) => state.currentPlayer);
   const { data, error } = usePlayerInfoQuery();
@@ -22,9 +24,9 @@ export function PlayerInfoCard() {
       {currentPlayer ? (
         <>
           <Image
-            src={"/beetroot.jpeg"}
+            src={`/api/player/image?season=${season}&playerSeasonID=${currentPlayer}`}
             alt="Player Image"
-            className="h-full object-cover rounded"
+            className={`h-full object-cover rounded`}
             width={400}
             height={400}
           />

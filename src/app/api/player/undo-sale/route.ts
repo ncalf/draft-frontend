@@ -13,6 +13,7 @@ const PayloadSchema = z.object({
     .string()
     .regex(/^\d{1,3}$/)
     .nonempty(),
+  wasRookie: z.boolean().optional(),
 });
 
 const undoSaleQuery = db
@@ -42,6 +43,18 @@ export async function PATCH(request: NextRequest) {
       season: parsed.season,
       playerSeasonID: parsed.playerSeasonID,
     });
+
+    if (parsed.wasRookie) {
+      await db
+        .update(draftPlayers)
+        .set({ position: "ROOK" })
+        .where(
+          and(
+            eq(draftPlayers.season, Number(parsed.season)),
+            eq(draftPlayers.playerSeasonID, Number(parsed.playerSeasonID))
+          )
+        );
+    }
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
