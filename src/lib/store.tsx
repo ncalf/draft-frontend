@@ -14,9 +14,9 @@ export const useDashboardStore = create<DashboardStore>()(
   persist(
     () =>
       ({
-        position: "RK",
+        position: undefined,
         availablePositions: ["C", "D", "F", "OB", "RK"],
-        currentPlayer: 76,
+        currentPlayer: undefined,
       } as DashboardStore),
     {
       name: "dashboard-storage",

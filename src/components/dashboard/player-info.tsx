@@ -13,7 +13,7 @@ const season = process.env.NEXT_PUBLIC_SEASON;
 
 export function PlayerInfoCard() {
   const currentPlayer = useDashboardStore((state) => state.currentPlayer);
-  const { data, error } = usePlayerInfoQuery();
+  const { isLoading, data, error } = usePlayerInfoQuery();
 
   if (error) {
     toast.error("Failed to fetch player name");
@@ -23,13 +23,18 @@ export function PlayerInfoCard() {
     <Card className="col-start-1 col-end-9 row-start-9 row-end-13 p-2 flex flex-row">
       {currentPlayer ? (
         <>
-          <Image
-            src={`/api/player/image?season=${season}&playerSeasonID=${currentPlayer}`}
-            alt="Player Image"
-            className={`h-full object-cover rounded`}
-            width={400}
-            height={400}
-          />
+          {isLoading ? (
+            <Skeleton className="w-[400px] h-[400px] rounded" />
+          ) : (
+            <Image
+              src={`/api/player/image?season=${season}&playerSeasonID=${currentPlayer}`}
+              alt="Player Image"
+              className={`h-full object-cover rounded`}
+              width={400}
+              height={400}
+              priority
+            />
+          )}
           <div className="flex flex-col w-full ml-4">
             <span className="text-4xl font-semibold tracking-tight mb-4">
               {data ? (

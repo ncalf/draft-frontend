@@ -15,6 +15,7 @@ export function useMarkPlayerNominatedMutation() {
         return;
       }
 
+      const stringPlayerSeasonID = String(playerSeasonID);
       await fetch(`/api/player/mark-nominated`, {
         method: "PATCH",
         headers: {
@@ -22,7 +23,7 @@ export function useMarkPlayerNominatedMutation() {
         },
         body: JSON.stringify({
           season: SEASON,
-          playerSeasonID,
+          playerSeasonID: stringPlayerSeasonID,
           position,
         }),
       });

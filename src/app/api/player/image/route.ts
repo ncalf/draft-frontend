@@ -3,7 +3,7 @@ import { draftPlayers } from "@/db/schema";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { eq, and } from "drizzle-orm";
-import { readFile } from "fs/promises";
+import { readFile, access } from "fs/promises";
 import path from "path";
 
 const pictureDirectory = process.env.PICTURE_DIRECTORY;
@@ -15,6 +15,15 @@ const SearchParamsSchema = z.object({
     .nonempty(),
   playerSeasonID: z.number().int().positive(),
 });
+
+async function fileExists(path: string): Promise<boolean> {
+  try {
+    await access(path);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -54,11 +63,15 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const imagePath = path.join(
+    let imagePath = path.join(
       pictureDirectory,
       season,
       `${player.playerID}.png`
     );
+
+    if (!(await fileExists(imagePath))) {
+      imagePath = path.join(pictureDirectory, "placeholder.png");
+    }
 
     const imageBuffer = await readFile(imagePath);
     return new NextResponse(imageBuffer, {

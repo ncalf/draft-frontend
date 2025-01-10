@@ -33,7 +33,7 @@ export function positionShortenedNameToFullName(
   shortName: string,
   capital?: boolean
 ): string {
-  const position = shortPositionsToPosition[shortName as Position];
+  const position = shortPositionsToPosition[shortName as Position] || "None";
   if (capital) {
     return position.toUpperCase();
   }

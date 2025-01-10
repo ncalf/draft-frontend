@@ -1,7 +1,7 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
-import { useUnsoldPlayersQuery } from "@/lib/queries";
+import { usePlayerInfoQuery, useUnsoldPlayersQuery } from "@/lib/queries";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { create } from "zustand";
 import { Button } from "../ui/button";
@@ -30,6 +30,8 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { useDashboardStore } from "@/lib/store";
+import { toast } from "sonner";
+import { useMarkPlayerNominatedMutation } from "@/lib/mutations";
 
 interface SoldPlayerStore {
   open: boolean;
@@ -39,26 +41,58 @@ const useSoldPlayerStore = create<SoldPlayerStore>()(() => ({
 }));
 
 export function SellOrGenerateCard() {
-  const { data } = useUnsoldPlayersQuery();
-
   return (
     <Card className="col-start-9 col-end-11 row-start-9 row-end-13 flex flex-col space-y-2 p-2 overflow-hidden">
       <SellButton />
-      <Button
-        className="h-full border bg-red-500 text-2xl font-semibold hover:bg-red-400"
-        disabled={!data}
-      >
-        Generate New Player
-      </Button>
+      <GenerateButton />
     </Card>
   );
 }
 
+function GenerateButton() {
+  const { isLoading: isUnsoldPlayersLoading, data } = useUnsoldPlayersQuery();
+  const { isLoading: isPlayerInfoLoading } = usePlayerInfoQuery();
+  const position = useDashboardStore((state) => state.position);
+
+  const mutation = useMarkPlayerNominatedMutation();
+
+  function generatePlayer() {
+    const unominatedPlayers = data?.filter((player) => !player.nominated);
+    if (unominatedPlayers?.length === 0 || !unominatedPlayers) {
+      toast.info("All players in the position have been nominated.");
+      return;
+    }
+
+    const randomPlayer =
+      unominatedPlayers[Math.floor(Math.random() * unominatedPlayers.length)];
+    const randomPlayerSeasonID = randomPlayer.playerSeasonID;
+    mutation.mutate(randomPlayerSeasonID);
+    useDashboardStore.setState({ currentPlayer: randomPlayerSeasonID });
+  }
+
+  return (
+    <Button
+      className="h-full border bg-red-500 text-2xl font-semibold hover:bg-red-400"
+      disabled={
+        isUnsoldPlayersLoading || isPlayerInfoLoading || position == undefined
+      }
+      onClick={generatePlayer}
+    >
+      Generate New Player
+    </Button>
+  );
+}
+
 function SellButton() {
+  const currentPlayer = useDashboardStore((state) => state.currentPlayer);
+
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="h-full w-full border bg-green-500 text-2xl hover:bg-green-400">
+        <Button
+          className="h-full w-full border bg-green-500 text-2xl hover:bg-green-400"
+          disabled={!currentPlayer}
+        >
           Sell Player
         </Button>
       </DialogTrigger>
