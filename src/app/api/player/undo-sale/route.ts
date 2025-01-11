@@ -5,14 +5,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 const PayloadSchema = z.object({
-  season: z
-    .string()
-    .regex(/^\d{4}$/)
-    .nonempty(),
-  playerSeasonID: z
-    .string()
-    .regex(/^\d{1,3}$/)
-    .nonempty(),
+  season: z.number().int().min(1000).max(9999),
+  playerSeasonID: z.number().int().min(1).max(999),
   wasRookie: z.boolean().optional(),
 });
 

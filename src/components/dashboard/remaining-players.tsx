@@ -2,11 +2,26 @@
 
 import { Card } from "@/components/ui/card";
 import { useUnsoldPlayersQuery } from "@/lib/queries";
+import { useEffect } from "react";
 import { GaugeComponent } from "react-gauge-component";
 import { toast } from "sonner";
 
 export function RemainingPlayersCard() {
   const { isLoading, data, error } = useUnsoldPlayersQuery();
+
+  useEffect(() => {
+    let toastId: string | number;
+
+    if (isLoading) {
+      toastId = toast.loading("Fetching unsold players...");
+    }
+
+    return () => {
+      if (toastId) {
+        toast.dismiss(toastId);
+      }
+    };
+  }, [isLoading]);
 
   const numberOfPlayers = data?.length || 1;
   const numberOfUnnominatedPlayers =

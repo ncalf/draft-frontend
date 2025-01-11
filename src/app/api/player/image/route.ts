@@ -2,11 +2,22 @@ import { db } from "@/db";
 import { draftPlayers } from "@/db/schema";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { eq, and } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
 import { readFile, access } from "fs/promises";
 import path from "path";
 
 const pictureDirectory = process.env.PICTURE_DIRECTORY;
+
+export const playerSeasonIDtoPlayerIDQuery = db
+  .select({ playerID: draftPlayers.playerID })
+  .from(draftPlayers)
+  .where(
+    and(
+      eq(draftPlayers.season, sql.placeholder("season")),
+      eq(draftPlayers.playerSeasonID, sql.placeholder("playerSeasonID"))
+    )
+  )
+  .limit(1);
 
 const SearchParamsSchema = z.object({
   season: z
@@ -37,19 +48,11 @@ export async function GET(request: NextRequest) {
 
     const { season, playerSeasonID } = parsedParams;
 
-    const player = await db
-      .select({
-        playerID: draftPlayers.playerID,
+    const player = await playerSeasonIDtoPlayerIDQuery
+      .execute({
+        season,
+        playerSeasonID,
       })
-      .from(draftPlayers)
-      .where(
-        and(
-          eq(draftPlayers.season, parseInt(season)),
-          eq(draftPlayers.playerSeasonID, playerSeasonID)
-        )
-      )
-      .limit(1)
-      .execute()
       .then((res) => res[0]);
 
     if (!player) {

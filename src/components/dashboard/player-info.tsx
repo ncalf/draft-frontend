@@ -58,7 +58,7 @@ export function PlayerInfoCard() {
 }
 
 const columnDefs: ColDef[] = [
-  { field: "season", headerName: "Season", flex: 1.5 },
+  { field: "season", headerName: "Season", flex: 1.3 },
   { field: "club", headerName: "Club" },
   { field: "gms", headerName: "Gms" },
   { field: "k", headerName: "K" },
@@ -87,11 +87,15 @@ function PlayerStatsTable() {
         loading={isLoading}
         suppressCellFocus={true}
         rowHeight={33}
+        getRowClass={(params) =>
+          params.rowIndex === 0 ? "font-bold text-xl" : ""
+        }
         defaultColDef={{
           sortable: false,
           filter: false,
           resizable: false,
           flex: 1,
+          suppressMovable: true,
         }}
       />
     </div>

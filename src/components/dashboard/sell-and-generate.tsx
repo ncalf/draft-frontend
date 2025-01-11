@@ -1,7 +1,7 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
-import { usePlayerInfoQuery, useUnsoldPlayersQuery } from "@/lib/queries";
+import { useTeamStatsQuery } from "@/lib/queries";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { create } from "zustand";
 import { Button } from "../ui/button";
@@ -14,12 +14,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { z } from "zod";
-import { positions, teamsIDs } from "@/lib/types";
-import { useForm } from "react-hook-form";
+import { Position, positions, teamsIDs, TeamStats } from "@/lib/types";
+import { useForm, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-import { teamIDToName } from "@/lib/utils";
+import { maxPlayersPerPosition, teamIDToName } from "@/lib/utils";
 import { Input } from "../ui/input";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -30,8 +30,9 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { useDashboardStore } from "@/lib/store";
-import { toast } from "sonner";
-import { useMarkPlayerNominatedMutation } from "@/lib/mutations";
+import { useSellPlayerMutation } from "@/lib/mutations";
+import { useEffect } from "react";
+import { useGenerateRandomPlayer } from "@/lib/hooks";
 
 interface SoldPlayerStore {
   open: boolean;
@@ -50,32 +51,11 @@ export function SellOrGenerateCard() {
 }
 
 function GenerateButton() {
-  const { isLoading: isUnsoldPlayersLoading, data } = useUnsoldPlayersQuery();
-  const { isLoading: isPlayerInfoLoading } = usePlayerInfoQuery();
-  const position = useDashboardStore((state) => state.position);
-
-  const mutation = useMarkPlayerNominatedMutation();
-
-  function generatePlayer() {
-    const unominatedPlayers = data?.filter((player) => !player.nominated);
-    if (unominatedPlayers?.length === 0 || !unominatedPlayers) {
-      toast.info("All players in the position have been nominated.");
-      return;
-    }
-
-    const randomPlayer =
-      unominatedPlayers[Math.floor(Math.random() * unominatedPlayers.length)];
-    const randomPlayerSeasonID = randomPlayer.playerSeasonID;
-    mutation.mutate(randomPlayerSeasonID);
-    useDashboardStore.setState({ currentPlayer: randomPlayerSeasonID });
-  }
+  const generatePlayer = useGenerateRandomPlayer();
 
   return (
     <Button
       className="h-full border bg-red-500 text-2xl font-semibold hover:bg-red-400"
-      disabled={
-        isUnsoldPlayersLoading || isPlayerInfoLoading || position == undefined
-      }
       onClick={generatePlayer}
     >
       Generate New Player
@@ -84,10 +64,14 @@ function GenerateButton() {
 }
 
 function SellButton() {
+  const open = useSoldPlayerStore((state) => state.open);
   const currentPlayer = useDashboardStore((state) => state.currentPlayer);
 
   return (
-    <Dialog>
+    <Dialog
+      open={open}
+      onOpenChange={(open) => useSoldPlayerStore.setState({ open })}
+    >
       <DialogTrigger asChild>
         <Button
           className="h-full w-full border bg-green-500 text-2xl hover:bg-green-400"
@@ -97,7 +81,7 @@ function SellButton() {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-h-[50vh] h-[50vh] w-[60vw] max-w-[60vw]">
+      <DialogContent className="max-h-[50vh] h-[50vh] w-[40vw] max-w-[40vw]">
         <DialogHeader>
           <DialogTitle>Sell Player</DialogTitle>
 
@@ -127,18 +111,29 @@ function SellPlayerForm() {
     },
   });
 
+  const mutation = useSellPlayerMutation();
+  const generatePlayer = useGenerateRandomPlayer();
+
   const position = useDashboardStore((state) => state.position);
   const isRookie = position === "ROOK";
+  const { data: teamStats } = useTeamStatsQuery();
+  const watchedPrice = form.watch("price");
 
-  function onSubmit(values: FormValues) {
-    console.log(values);
+  async function onSubmit(values: FormValues) {
+    mutation.mutate({
+      playerSeasonID: useDashboardStore.getState().currentPlayer!,
+      teamID: values.teamID,
+      price: values.price,
+    });
+    generatePlayer();
+    useSoldPlayerStore.setState({ open: false });
   }
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full h-full px-12 flex justify-center items-center"
+        className="w-full h-full flex justify-center items-center"
       >
         <div className="flex space-x-8 w-full h-full">
           <div className="flex flex-col flex-1">
@@ -146,30 +141,30 @@ function SellPlayerForm() {
               control={form.control}
               name="teamID"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-bold">Team</FormLabel>
-                  <FormControl>
-                    <RadioGroup
-                      onValueChange={field.onChange}
-                      defaultValue={field.value.toString()}
-                      className="flex flex-col space-y-1"
-                    >
-                      {teamsIDs.map((teamID) => (
-                        <FormItem
-                          className="flex items-center space-x-3 space-y-0"
-                          key={teamID}
-                        >
-                          <FormControl>
-                            <RadioGroupItem value={teamID.toString()} />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            {teamIDToName(teamID)}
-                          </FormLabel>
-                        </FormItem>
-                      ))}
-                    </RadioGroup>
-                  </FormControl>
-                </FormItem>
+                <div className="flex flex-col">
+                  <RadioGroup
+                    onValueChange={(val) => field.onChange(Number(val))}
+                    value={field.value?.toString()}
+                    className="flex flex-col space-y-1"
+                  >
+                    <FormLabel className={"font-bold"}>Team</FormLabel>
+
+                    {teamsIDs.map((teamID) => (
+                      <TeamRadioButton
+                        key={teamID}
+                        teamStats={
+                          teamStats?.find(
+                            (team) => team.teamID === teamID
+                          ) as TeamStats
+                        }
+                        position={position as Position}
+                        currentPrice={watchedPrice}
+                        form={form}
+                        selected={field.value === teamID}
+                      />
+                    ))}
+                  </RadioGroup>
+                </div>
               )}
             />
           </div>
@@ -183,10 +178,15 @@ function SellPlayerForm() {
                   <FormLabel className="font-bold">Price</FormLabel>
                   <FormControl>
                     <Input
-                      type="number"
                       {...field}
-                      className="input-class"
-                      onChange={field.onChange}
+                      type="number"
+                      className="text-3xl h-16 font-semibold"
+                      onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                      step={0.1}
+                      min={0}
+                      style={{
+                        fontSize: "2rem",
+                      }}
                     />
                   </FormControl>
                 </FormItem>
@@ -223,7 +223,59 @@ function SellPlayerForm() {
   );
 }
 
-// radio button team select
-// number input for a price
-// if the player is a rookie, have a position selector
-// button to sell and regenerate a new player
+interface TeamRadioButtonProps {
+  teamStats: TeamStats;
+  position: Position;
+  currentPrice: number;
+  form: UseFormReturn<FormValues>;
+  selected: boolean;
+}
+
+function TeamRadioButton({
+  teamStats,
+  position,
+  currentPrice,
+  form,
+  selected,
+}: TeamRadioButtonProps) {
+  let isDisabled = false;
+
+  const maxPlayers = maxPlayersPerPosition[position];
+  const teamPlayers = teamStats[position.toLowerCase() as keyof TeamStats];
+
+  if (teamPlayers >= maxPlayers) {
+    isDisabled = true;
+  }
+
+  const numberOfPlayers =
+    teamStats.c + teamStats.d + teamStats.f + teamStats.ob + teamStats.rk;
+  const maximumSpend =
+    20 -
+    parseFloat(
+      (teamStats.total_price + (21 - numberOfPlayers) * 0.1).toFixed(2)
+    );
+
+  if (currentPrice > maximumSpend) {
+    isDisabled = true;
+  }
+
+  useEffect(() => {
+    if (selected && isDisabled) {
+      form.setValue("teamID", 0);
+    }
+  }, [selected, isDisabled, form]);
+
+  return (
+    <FormItem className="flex items-center space-x-3 space-y-0">
+      <FormControl>
+        <RadioGroupItem
+          value={teamStats.teamID.toString()}
+          disabled={isDisabled}
+        />
+      </FormControl>
+      <FormLabel className={`font-normal ${isDisabled ? "text-gray-400" : ""}`}>
+        {`${teamIDToName(teamStats.teamID)} ($${maximumSpend})`}
+      </FormLabel>
+    </FormItem>
+  );
+}

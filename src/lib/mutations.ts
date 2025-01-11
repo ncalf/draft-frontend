@@ -4,7 +4,7 @@ import { useDashboardStore } from "./store";
 import { toast } from "sonner";
 import { Position, SoldPlayer, TeamID, UnsoldPlayer } from "./types";
 
-const SEASON = process.env.NEXT_PUBLIC_SEASON;
+const SEASON = process.env.NEXT_PUBLIC_SEASON!;
 
 export function useMarkPlayerNominatedMutation() {
   return useMutation({
@@ -15,15 +15,14 @@ export function useMarkPlayerNominatedMutation() {
         return;
       }
 
-      const stringPlayerSeasonID = String(playerSeasonID);
       await fetch(`/api/player/mark-nominated`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          season: SEASON,
-          playerSeasonID: stringPlayerSeasonID,
+          season: parseInt(SEASON),
+          playerSeasonID,
           position,
         }),
       });
@@ -105,8 +104,8 @@ export function useSellPlayerMutation() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          season: SEASON,
-          playerSeasonID: playerSeasonID,
+          season: parseInt(SEASON),
+          playerSeasonID,
           ...(sellPosition ? { position: sellPosition } : {}),
           teamID,
           price,
@@ -168,7 +167,7 @@ export function useUndoSaleMutation() {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          season: SEASON,
+          season: parseInt(SEASON),
           playerSeasonID,
           ...(wasRookie ? { wasRookie: true } : {}),
         }),

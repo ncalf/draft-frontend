@@ -5,15 +5,9 @@ import { and, eq, sql } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-const SearchParamsSchema = z.object({
-  season: z
-    .string()
-    .regex(/^\d{4}$/)
-    .nonempty(),
-  playerSeasonID: z
-    .string()
-    .regex(/^\d{1,3}$/)
-    .nonempty(),
+const PayloadSchema = z.object({
+  season: z.number().int().min(1000).max(9999),
+  playerSeasonID: z.number().int().min(1).max(999),
   position: z.enum(positions),
 });
 
@@ -32,10 +26,10 @@ const query = db
 export async function PATCH(request: NextRequest) {
   try {
     const rawBody = await request.json();
-    const parsedBody = SearchParamsSchema.parse(rawBody);
+    const parsedBody = PayloadSchema.parse(rawBody);
 
-    const playerSeasonID = parseInt(parsedBody.playerSeasonID);
-    const season = parseInt(parsedBody.season);
+    const playerSeasonID = parsedBody.playerSeasonID;
+    const season = parsedBody.season;
     const position = parsedBody.position;
 
     await query.execute({

@@ -3,10 +3,8 @@ import {
   text,
   decimal,
   boolean,
-  mysqlSchema,
+  mysqlTable,
 } from "drizzle-orm/mysql-core";
-
-export const ncalfdb = mysqlSchema("ncalfdb");
 
 const sharedColumns = {
   season: int("Season"),
@@ -17,7 +15,7 @@ const sharedColumns = {
   position: text("Position"),
 };
 
-export const draftPlayers = ncalfdb.table("draft_players", {
+export const draftPlayers = mysqlTable("draft_players", {
   firstName: text("FirstName"),
   surname: text("Surname"),
   price: decimal("Price", { precision: 4, scale: 2 }),
@@ -28,7 +26,7 @@ export const draftPlayers = ncalfdb.table("draft_players", {
   ...sharedColumns,
 });
 
-export const stats = ncalfdb.table("stats", {
+export const stats = mysqlTable("stats", {
   round: int("Round"),
   positionPlayed: int("PositionPlayed"),
   k: int("k"),

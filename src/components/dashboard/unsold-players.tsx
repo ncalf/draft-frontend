@@ -19,6 +19,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { create } from "zustand";
 import { UnsoldPlayer } from "@/lib/types";
+import { useDashboardStore } from "@/lib/store";
+import { useMarkPlayerNominatedMutation } from "@/lib/mutations";
 
 interface UnsoldPlayerStore {
   open: boolean;
@@ -59,10 +61,15 @@ export function UnsoldPlayersCard() {
 function numberSort(a: number, b: number) {
   return a - b;
 }
-type Params = { data: UnsoldPlayer[] };
+type Params = { data: UnsoldPlayer };
 const UnsoldPlayersModalContent = () => {
   const { isLoading, data, error } = useUnsoldPlayersQuery();
   const [searchText, setSearchText] = useState("");
+  const mutation = useMarkPlayerNominatedMutation();
+
+  if (error) {
+    toast.error("Failed to fetch unsold players");
+  }
 
   const columnDefs: ColDef[] = [
     {
@@ -138,7 +145,13 @@ const UnsoldPlayersModalContent = () => {
           variant="ghost"
           className="h-8 w-8 p-0"
           onClick={() => {
-            console.log(params.data);
+            const playerSeasonID = params.data.playerSeasonID;
+
+            mutation.mutate(playerSeasonID);
+            useDashboardStore.setState({
+              currentPlayer: playerSeasonID,
+            });
+            useUnsoldPlayerStore.setState({ open: false });
           }}
         >
           <User className="h-4 w-4" />
@@ -146,10 +159,6 @@ const UnsoldPlayersModalContent = () => {
       ),
     },
   ];
-
-  if (error) {
-    toast.error("Failed to fetch unsold players");
-  }
 
   return (
     <div className="w-full h-full flex flex-col">

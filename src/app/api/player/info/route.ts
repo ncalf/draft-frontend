@@ -3,6 +3,7 @@ import { draftPlayers, stats } from "@/db/schema";
 import { and, eq, gte, sql, desc, count } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { playerSeasonIDtoPlayerIDQuery } from "../image/route";
 
 const SearchParamsSchema = z.object({
   season: z
@@ -25,7 +26,12 @@ const basicInfoQuery = db
     club: draftPlayers.club,
   })
   .from(draftPlayers)
-  .where(eq(draftPlayers.playerSeasonID, sql.placeholder("playerSeasonID")))
+  .where(
+    and(
+      eq(draftPlayers.playerSeasonID, sql.placeholder("playerSeasonID")),
+      eq(draftPlayers.season, sql.placeholder("season"))
+    )
+  )
   .prepare();
 
 const statsQuery = db
@@ -46,7 +52,7 @@ const statsQuery = db
   .from(stats)
   .where(
     and(
-      eq(stats.playerSeasonID, sql.placeholder("playerSeasonID")),
+      eq(stats.playerID, sql.placeholder("playerID")),
       gte(stats.season, sql.placeholder("seasonThreshold")),
       sql`${stats.positionPlayed} > 0`
     )
@@ -69,10 +75,18 @@ export async function GET(request: NextRequest) {
 
     const [nameResult] = await basicInfoQuery.execute({
       playerSeasonID,
+      season,
     });
 
-    const statsResult = await statsQuery.execute({
+    const playerIDResult = await playerSeasonIDtoPlayerIDQuery.execute({
+      season,
       playerSeasonID,
+    });
+
+    const playerID = playerIDResult[0].playerID;
+
+    const statsResult = await statsQuery.execute({
+      playerID,
       seasonThreshold,
     });
 

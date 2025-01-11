@@ -6,23 +6,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 const PayloadSchema = z.object({
-  season: z
-    .string()
-    .regex(/^\d{4}$/)
-    .nonempty(),
-  playerSeasonID: z
-    .string()
-    .regex(/^\d{1,3}$/)
-    .nonempty(),
+  season: z.number().int().min(1000).max(9999),
+  playerSeasonID: z.number().int().min(1).max(999),
   position: z.enum(positions).optional(),
-  teamID: z
-    .string()
-    .regex(/^([1-9]|10|11)$/)
-    .nonempty(),
-  price: z
-    .string()
-    .regex(/^\d+(\.\d{1,2})?$/)
-    .nonempty(),
+  teamID: z.number().int().min(1).max(11),
+  price: z.number().min(0).multipleOf(0.01),
 });
 
 const positionQuery = db

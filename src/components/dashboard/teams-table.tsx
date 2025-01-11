@@ -108,7 +108,7 @@ function TeamDialog({ teamID }: { teamID: TeamID }) {
   const [searchText, setSearchText] = useState("");
 
   if (error) {
-    toast.error("Failed to fetch club players");
+    toast.error("Failed to fetch team players");
   }
 
   return (
@@ -120,7 +120,7 @@ function TeamDialog({ teamID }: { teamID: TeamID }) {
         <DialogHeader>
           <DialogTitle>{teamIDToName(teamID)}</DialogTitle>
           <VisuallyHidden.Root>
-            <DialogDescription>Club players</DialogDescription>
+            <DialogDescription>Team players</DialogDescription>
           </VisuallyHidden.Root>
         </DialogHeader>
         <Input

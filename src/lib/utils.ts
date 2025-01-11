@@ -18,7 +18,6 @@ export function teamIDToName(teamID: TeamID): string {
 }
 
 export function clubShortenedNameToFullName(shortName: string): string {
-  console.log(shortName);
   return shortenedClubIdToName[shortName as AFLClub];
 }
 
@@ -39,3 +38,12 @@ export function positionShortenedNameToFullName(
   }
   return position;
 }
+
+export const maxPlayersPerPosition: Record<Position, number> = {
+  C: 3,
+  D: 8,
+  F: 8,
+  OB: 2,
+  RK: 1,
+  ROOK: 0,
+};

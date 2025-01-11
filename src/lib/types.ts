@@ -11,7 +11,7 @@ export const positions = ["C", "D", "F", "OB", "RK", "ROOK"] as const;
 export type Position = (typeof positions)[number];
 export type PositionState = Position | undefined;
 
-export const teamIDsToName: { [key: number]: string } = {
+export const teamIDsToName: Record<number, string> = {
   1: "Barnestoneworth United",
   2: "Berwick Blankets",
   3: "Bogong Bedouin",
