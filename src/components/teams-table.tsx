@@ -21,7 +21,7 @@ import { ColDef } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Input } from "../ui/input";
+import { Input } from "./ui/input";
 
 const clubsColumnDefs: ColDef[] = [
   {

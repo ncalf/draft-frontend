@@ -12,7 +12,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Undo } from "lucide-react";
+import { useUndoSaleMutation } from "@/lib/mutations";
+import { useDashboardStore } from "@/lib/store";
+import { Position } from "@/lib/types";
 
+type Params = {
+  data: { playerSeasonID: number; name: string; position: Position };
+};
 const columnDefs: ColDef[] = [
   {
     field: "playerSeasonID",
@@ -23,9 +29,7 @@ const columnDefs: ColDef[] = [
     field: "name",
     headerName: "Name",
     flex: 2,
-    cellRenderer: (params: { value: string }) => (
-      <UndoSaleDropdown name={params.value} />
-    ),
+    cellRenderer: (params: Params) => <UndoSaleDropdown params={params} />,
   },
   {
     field: "position",
@@ -70,12 +74,22 @@ export function SoldPlayerCard() {
   );
 }
 
-function UndoSaleDropdown({ name }: { name: string }) {
+function UndoSaleDropdown({ params }: { params: Params }) {
+  const mutation = useUndoSaleMutation();
+
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>{name}</DropdownMenuTrigger>
+      <DropdownMenuTrigger>{params.data.name}</DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
+            mutation.mutate({ playerSeasonID: params.data.playerSeasonID });
+            useDashboardStore.setState({ position: params.data.position });
+            useDashboardStore.setState({
+              currentPlayer: params.data.playerSeasonID,
+            });
+          }}
+        >
           <Undo />
           <span>Undo Sale</span>
         </DropdownMenuItem>

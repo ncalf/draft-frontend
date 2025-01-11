@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { useTeamStatsQuery } from "@/lib/queries";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { create } from "zustand";
-import { Button } from "../ui/button";
+import { Button } from "./ui/button";
 import {
   Dialog,
   DialogContent,
@@ -17,10 +17,10 @@ import { z } from "zod";
 import { Position, positions, teamsIDs, TeamStats } from "@/lib/types";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
-import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { Form, FormControl, FormField, FormItem, FormLabel } from "./ui/form";
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { maxPlayersPerPosition, teamIDToName } from "@/lib/utils";
-import { Input } from "../ui/input";
+import { Input } from "./ui/input";
 import { Separator } from "@/components/ui/separator";
 import {
   Select,
@@ -108,6 +108,7 @@ function SellPlayerForm() {
     defaultValues: {
       teamID: 1,
       price: 0,
+      position: undefined,
     },
   });
 

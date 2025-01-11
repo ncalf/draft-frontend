@@ -1,13 +1,13 @@
 "use client";
 
-import { MVPsCard } from "@/components/dashboard/mvps";
-import { PlayerInfoCard } from "@/components/dashboard/player-info";
-import { PositionFilterCard } from "@/components/dashboard/position-filter";
-import { RemainingPlayersCard } from "@/components/dashboard/remaining-players";
-import { SellOrGenerateCard } from "@/components/dashboard/sell-and-generate";
-import { SoldPlayerCard } from "@/components/dashboard/sold-players";
-import { TeamTableCard } from "@/components/dashboard/teams-table";
-import { UnsoldPlayersCard } from "@/components/dashboard/unsold-players";
+import { MVPsCard } from "@/components/mvps";
+import { PlayerInfoCard } from "@/components/player-info";
+import { PositionFilterCard } from "@/components/position-filter";
+import { RemainingPlayersCard } from "@/components/remaining-players";
+import { SellOrGenerateCard } from "@/components/sell-and-generate";
+import { SoldPlayerCard } from "@/components/sold-players";
+import { TeamTableCard } from "@/components/teams-table";
+import { UnsoldPlayersCard } from "@/components/unsold-players";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
