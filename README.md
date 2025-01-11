@@ -1,36 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NCALF Draft
 
-## Getting Started
+*A website frontend and backend api for a fantasy footy drafting process, with live images, tables and statistics scraped from official sporting websites.*
 
-First, run the development server:
+ The fronted website is created using NextJS. shadcn ui with tailwind css is used for the interface, and Tanstack Query with zustand for client-side state management.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+ The backend API is also created with NextJS, using route handlers, and drizzle orm to communicate with the MySQL database.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### High Seas Context
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+ *add context here*
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Starting the Draft
 
-## Learn More
+In order to start the NextJS application (which includes both the website and api) run `npm run build` and then `npm run start`. To do this, a `.env` file is required with the following values:
 
-To learn more about Next.js, take a look at the following resources:
+- `DB_HOST`: The IP of the host of the database.
+- `DB_PORT`: The port the database is being run on.
+- `DB_USER`: The database user to connect to the database with.
+- `DB_PASSWORD`: The password for the database user.
+- `NEXT_PUBLIC_SEASON`: The season (year) to run the draft for.
+- `PICTURE_DIRECTORY`: The filepath to the directory of downloaded players
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+To develop, run `npm run dev` with the same `.env` file specifications as above.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## API Routes
 
-## Deploy on Vercel
+All routes must begin with `/api`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Route                   | HTTP Method | Params/Payload                                                               | Description                                                         |
+| ----------------------- | ----------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `player/image`          | GET         | ?season=...&playerSeasonID=...                                               | Retrieve the image of a player.                                     |
+| `player/info            | GET         | ?season=...&playerSeason=...&years=...                                       | Retrieve the full name, and past year statistics of a player.       |
+| `player/mark-nominated` | PATCH       | {season: ..., playerSeasonID: ..., position: ...}                            | Mark a player as nominated in the database.                         |
+| `player/sell`           | PATCH       | {season:..., playerSeasonID: ...,  teamID: ..., price: ..., position?: ...,} | Sell a player to a team.                                            |
+| `player/undo-sale`      | PATCH       | {season: ..., playerSeasonID: ..., wasRookie: ...}                           | Undo the sale of a previously sold player.                          |
+| `players/sold`          | GET         | ?season=...                                                                  | Get all of the sold players in a season.                            |
+| `players/unsold`        | GET         | ?position=...&season=...&years                                               | Get the list of unsold players for a season (including statistics). |
+| `teams/players`         | GET         | ?teamID=...&season=...                                                       | Gets the list of players currently sold to a team.                  |
+| `teams/stats`           | GET         | ?season=...                                                                  | Gets a summary of all team position and price numbers.              |

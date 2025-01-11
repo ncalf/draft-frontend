@@ -8,9 +8,9 @@ import { z } from "zod";
 const PayloadSchema = z.object({
   season: z.number().int().min(1000).max(9999),
   playerSeasonID: z.number().int().min(1).max(999),
-  position: z.enum(positions).optional(),
   teamID: z.number().int().min(1).max(11),
   price: z.number().min(0).multipleOf(0.01),
+  position: z.enum(positions).optional(),
 });
 
 const positionQuery = db
