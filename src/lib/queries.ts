@@ -6,8 +6,8 @@ import {
   TeamID,
   PlayerInfo,
   SoldPlayer,
-} from "./types";
-import { useDashboardStore } from "./store";
+} from "@/lib/types";
+import { useDashboardStore } from "@/lib/store";
 
 const SEASON = process.env.NEXT_PUBLIC_SEASON;
 

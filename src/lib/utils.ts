@@ -5,7 +5,7 @@ import {
   shortPositionsToPosition,
   TeamID,
   teamIDsToName,
-} from "./types";
+} from "@/lib/types";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 

@@ -1,8 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
-import { queryClient } from "./providers";
-import { useDashboardStore } from "./store";
+import { queryClient } from "@/lib/providers";
+import { useDashboardStore } from "@/lib/store";
 import { toast } from "sonner";
-import { Position, SoldPlayer, TeamID, UnsoldPlayer } from "./types";
+import { Position, SoldPlayer, TeamID, UnsoldPlayer } from "@/lib/types";
 
 const SEASON = process.env.NEXT_PUBLIC_SEASON!;
 
@@ -155,7 +155,15 @@ export function useSellPlayerMutation() {
 
 export function useUndoSaleMutation() {
   return useMutation({
-    mutationFn: async ({ playerSeasonID }: { playerSeasonID: number }) => {
+    mutationFn: async ({
+      playerSeasonID,
+      position,
+    }: {
+      playerSeasonID: number;
+      position: Position;
+    }) => {
+      void position; // to avoid unused variable warning (it is required in the onSuccess callback)
+
       const stored = localStorage.getItem("wasRookiePlayers");
       let wasRookie = false;
       if (stored) {
@@ -172,18 +180,10 @@ export function useUndoSaleMutation() {
           ...(wasRookie ? { wasRookie: true } : {}),
         }),
       });
-
-      if (wasRookie && stored) {
-        const updated = JSON.parse(stored).filter(
-          (id: number) => id !== playerSeasonID
-        );
-        localStorage.setItem("wasRookiePlayers", JSON.stringify(updated));
-      }
     },
     onSuccess: (data, variables) => {
       const position = useDashboardStore.getState().position;
 
-      queryClient.invalidateQueries({ queryKey: ["unsoldPlayers", position] });
       queryClient.invalidateQueries({ queryKey: ["soldPlayers", SEASON] });
       queryClient.invalidateQueries({ queryKey: ["teamStats", SEASON] });
 
@@ -203,6 +203,30 @@ export function useUndoSaleMutation() {
       }
 
       useDashboardStore.setState({ currentPlayer: variables.playerSeasonID });
+
+      const stored = localStorage.getItem("wasRookiePlayers");
+      const wasRookie = stored
+        ? JSON.parse(stored).includes(variables.playerSeasonID)
+        : false;
+
+      if (wasRookie) {
+        queryClient.invalidateQueries({ queryKey: ["unsoldPlayers", "ROOK"] });
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: ["unsoldPlayers", position],
+        });
+      }
+
+      useDashboardStore.setState({
+        position: wasRookie ? "ROOK" : variables.position,
+      });
+
+      if (wasRookie && stored) {
+        const updated = JSON.parse(stored).filter(
+          (id: number) => id !== variables.playerSeasonID
+        );
+        localStorage.setItem("wasRookiePlayers", JSON.stringify(updated));
+      }
     },
   });
 }

@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { useTeamStatsQuery } from "@/lib/queries";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { create } from "zustand";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -18,9 +18,13 @@ import { Position, positions, teamsIDs, TeamStats } from "@/lib/types";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "./ui/form";
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
-import { maxPlayersPerPosition, teamIDToName } from "@/lib/utils";
-import { Input } from "./ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  maxPlayersPerPosition,
+  teamIDToName,
+  numberToPriceString,
+} from "@/lib/utils";
+import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import {
   Select,
@@ -115,17 +119,23 @@ function SellPlayerForm() {
   const mutation = useSellPlayerMutation();
   const generatePlayer = useGenerateRandomPlayer();
 
-  const position = useDashboardStore((state) => state.position);
-  const isRookie = position === "ROOK";
+  const positionFromStore = useDashboardStore((state) => state.position);
+  const isRookie = positionFromStore === "ROOK";
+  const position = isRookie ? form.watch("position") : positionFromStore;
+
   const { data: teamStats } = useTeamStatsQuery();
   const watchedPrice = form.watch("price");
 
   async function onSubmit(values: FormValues) {
+    const sellPosition = isRookie ? position : undefined; // If the player is a rookie, sell the player in the position selected in the form
+
     mutation.mutate({
       playerSeasonID: useDashboardStore.getState().currentPlayer!,
       teamID: values.teamID,
       price: values.price,
+      ...(sellPosition ? { sellPosition } : {}),
     });
+
     generatePlayer();
     useSoldPlayerStore.setState({ open: false });
   }
@@ -205,11 +215,13 @@ function SellPlayerForm() {
                         <SelectValue placeholder="Select position" />
                       </SelectTrigger>
                       <SelectContent>
-                        {positions.map((pos) => (
-                          <SelectItem key={pos} value={pos}>
-                            {pos}
-                          </SelectItem>
-                        ))}
+                        {positions
+                          .filter((pos) => pos !== "ROOK")
+                          .map((pos) => (
+                            <SelectItem key={pos} value={pos}>
+                              {pos}
+                            </SelectItem>
+                          ))}
                       </SelectContent>
                     </Select>
                   </FormControl>
@@ -226,7 +238,7 @@ function SellPlayerForm() {
 
 interface TeamRadioButtonProps {
   teamStats: TeamStats;
-  position: Position;
+  position: Position | undefined;
   currentPrice: number;
   form: UseFormReturn<FormValues>;
   selected: boolean;
@@ -240,23 +252,31 @@ function TeamRadioButton({
   selected,
 }: TeamRadioButtonProps) {
   let isDisabled = false;
+  let maxPlayers: number | undefined;
+  let teamPlayers: number | undefined;
 
-  const maxPlayers = maxPlayersPerPosition[position];
-  const teamPlayers = teamStats[position.toLowerCase() as keyof TeamStats];
+  if (!position) {
+    isDisabled = true;
+  } else {
+    maxPlayers = maxPlayersPerPosition[position];
+    teamPlayers = teamStats[position.toLowerCase() as keyof TeamStats];
+  }
 
-  if (teamPlayers >= maxPlayers) {
+  if (
+    teamPlayers !== undefined &&
+    maxPlayers !== undefined &&
+    teamPlayers >= maxPlayers
+  ) {
     isDisabled = true;
   }
 
   const numberOfPlayers =
     teamStats.c + teamStats.d + teamStats.f + teamStats.ob + teamStats.rk;
-  const maximumSpend =
-    20 -
-    parseFloat(
-      (teamStats.total_price + (21 - numberOfPlayers) * 0.1).toFixed(2)
-    );
+  const rawValue = teamStats.total_price + (21 - numberOfPlayers) * 0.1;
+  const maximumSpendValue = 20 - rawValue;
+  const maximumSpendString = numberToPriceString(maximumSpendValue);
 
-  if (currentPrice > maximumSpend) {
+  if (currentPrice > maximumSpendValue) {
     isDisabled = true;
   }
 
@@ -275,7 +295,7 @@ function TeamRadioButton({
         />
       </FormControl>
       <FormLabel className={`font-normal ${isDisabled ? "text-gray-400" : ""}`}>
-        {`${teamIDToName(teamStats.teamID)} ($${maximumSpend})`}
+        {`${teamIDToName(teamStats.teamID)} (${maximumSpendString}) `}
       </FormLabel>
     </FormItem>
   );

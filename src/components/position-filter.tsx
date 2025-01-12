@@ -13,7 +13,7 @@ import {
 import { useDashboardStore } from "@/lib/store";
 import { Position, positions } from "@/lib/types";
 import { positionShortenedNameToFullName } from "@/lib/utils";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import SlotCounter, { SlotCounterRef } from "react-slot-counter";
 
 export function PositionFilterCard() {
@@ -29,21 +29,32 @@ export function PositionFilterCard() {
   const dummyCharacters = ["CENTRE", "DEFENDER", "FORWARD", "ONBALLER", "RUCK"];
   const counterRef = useRef<SlotCounterRef>(null);
 
+  useEffect(() => {
+    setStartingValue(positionShortenedNameToFullName(position, true));
+    counterRef.current?.startAnimation({
+      duration: 0.5,
+      dummyCharacterCount: 0,
+    });
+  }, [position]);
+
   const handlePositionChange = (
     newPosition: Position,
     quickSwitch: boolean
   ) => {
-    if (isAnimating) return;
+    if (isAnimating) return; // to avoid changing positions when it already is animating
 
     setIsAnimating(true);
     useDashboardStore.setState({ position: newPosition });
 
+    // if a position has been specifically selected, make a quick switch to it
     if (quickSwitch) {
       counterRef.current?.startAnimation({
         duration: 0.5,
         dummyCharacterCount: 0,
       });
     }
+
+    // wait for the animation to finish before updating the starting value, so it only affects the next animation
     setTimeout(() => {
       const newStartingValue = positionShortenedNameToFullName(
         newPosition,

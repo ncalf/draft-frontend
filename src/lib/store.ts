@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { Position, PositionState } from "./types";
+import { Position, PositionState } from "@/lib/types";
 
 interface DashboardStore {
   position: PositionState;

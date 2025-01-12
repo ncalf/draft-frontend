@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Undo } from "lucide-react";
 import { useUndoSaleMutation } from "@/lib/mutations";
-import { useDashboardStore } from "@/lib/store";
 import { Position } from "@/lib/types";
 
 type Params = {
@@ -83,10 +82,9 @@ function UndoSaleDropdown({ params }: { params: Params }) {
       <DropdownMenuContent>
         <DropdownMenuItem
           onClick={() => {
-            mutation.mutate({ playerSeasonID: params.data.playerSeasonID });
-            useDashboardStore.setState({ position: params.data.position });
-            useDashboardStore.setState({
-              currentPlayer: params.data.playerSeasonID,
+            mutation.mutate({
+              playerSeasonID: params.data.playerSeasonID,
+              position: params.data.position,
             });
           }}
         >

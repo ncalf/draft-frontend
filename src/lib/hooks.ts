@@ -1,7 +1,7 @@
 import { toast } from "sonner";
-import { useDashboardStore } from "./store";
-import { usePlayerInfoQuery, useUnsoldPlayersQuery } from "./queries";
-import { useMarkPlayerNominatedMutation } from "./mutations";
+import { useDashboardStore } from "@/lib/store";
+import { usePlayerInfoQuery, useUnsoldPlayersQuery } from "@/lib/queries";
+import { useMarkPlayerNominatedMutation } from "@/lib/mutations";
 
 export function useGenerateRandomPlayer() {
   const { isLoading: isUnsoldPlayersLoading, data } = useUnsoldPlayersQuery();
