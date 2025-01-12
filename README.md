@@ -38,7 +38,7 @@ All routes must begin with `/api`.
 | Route                   | HTTP Method | Params/Payload                                                               | Description                                                         |
 | ----------------------- | ----------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------- |
 | `player/image`          | GET         | ?season=...&playerSeasonID=...                                               | Retrieve the image of a player.                                     |
-| `player/info            | GET         | ?season=...&playerSeason=...&years=...                                       | Retrieve the full name, and past year statistics of a player.       |
+| `player/info`           | GET         | ?season=...&playerSeason=...&years=...                                       | Retrieve the full name, and past year statistics of a player.       |
 | `player/mark-nominated` | PATCH       | {season: ..., playerSeasonID: ..., position: ...}                            | Mark a player as nominated in the database.                         |
 | `player/sell`           | PATCH       | {season:..., playerSeasonID: ...,  teamID: ..., price: ..., position?: ...,} | Sell a player to a team.                                            |
 | `player/undo-sale`      | PATCH       | {season: ..., playerSeasonID: ..., wasRookie: ...}                           | Undo the sale of a previously sold player.                          |
