@@ -7,7 +7,7 @@ import { AgGridReact } from "ag-grid-react";
 import { ColDef } from "ag-grid-community";
 
 const columnDefs: ColDef[] = [
-  { headerName: "Name", field: "name" },
+  { headerName: "Name", field: "name", flex: 1 },
   { headerName: "Price", field: "price" },
 ];
 
@@ -31,7 +31,7 @@ export function MVPsCard() {
         <AgGridReact
           rowData={topPlayers}
           columnDefs={columnDefs}
-          pagination={false}
+          rowHeight={38}
           defaultColDef={{
             sortable: false,
             filter: false,

@@ -19,11 +19,11 @@ async function handleResponse(response: Response) {
 }
 
 export function useUnsoldPlayersQuery() {
-  return useQuery<UnsoldPlayer[]>({
-    queryKey: ["unsoldPlayers", useDashboardStore.getState().position],
-    queryFn: async () => {
-      const position = useDashboardStore.getState().position;
+  const position = useDashboardStore((state) => state.position);
 
+  return useQuery<UnsoldPlayer[]>({
+    queryKey: ["unsoldPlayers", position],
+    queryFn: async () => {
       if (!position) {
         return [];
       }
@@ -75,11 +75,11 @@ export const useSoldPlayersQuery = () => {
 };
 
 export function usePlayerInfoQuery() {
-  return useQuery<PlayerInfo>({
-    queryKey: ["playerInfo", useDashboardStore.getState().currentPlayer],
-    queryFn: async () => {
-      const currentPlayer = useDashboardStore.getState().currentPlayer;
+  const currentPlayer = useDashboardStore((state) => state.currentPlayer);
 
+  return useQuery<PlayerInfo>({
+    queryKey: ["playerInfo", currentPlayer],
+    queryFn: async () => {
       if (!currentPlayer) {
         return null;
       }

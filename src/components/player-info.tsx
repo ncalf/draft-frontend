@@ -30,7 +30,7 @@ export function PlayerInfoCard() {
               src={`/api/player/image?season=${season}&playerSeasonID=${currentPlayer}`}
               alt="Player Image"
               className={`h-full object-cover rounded`}
-              width={400}
+              width={350}
               height={400}
               priority
             />
@@ -59,17 +59,17 @@ export function PlayerInfoCard() {
 
 const columnDefs: ColDef[] = [
   { field: "season", headerName: "Season", flex: 1.3 },
-  { field: "club", headerName: "Club" },
+  { field: "club", headerName: "Club", flex: 1.1 },
   { field: "gms", headerName: "Gms" },
-  { field: "k", headerName: "K" },
-  { field: "m", headerName: "M" },
-  { field: "hb", headerName: "HB" },
+  { field: "k", headerName: "K", flex: 1.1 },
+  { field: "m", headerName: "M", flex: 1.1 },
+  { field: "hb", headerName: "HB", flex: 1.1 },
   { field: "ff", headerName: "FF" },
   { field: "fa", headerName: "FA" },
   { field: "g", headerName: "G" },
   { field: "b", headerName: "B" },
-  { field: "ho", headerName: "HO" },
-  { field: "t", headerName: "T" },
+  { field: "ho", headerName: "HO", flex: 1.1 },
+  { field: "t", headerName: "T", flex: 1.1 },
 ];
 
 function PlayerStatsTable() {
