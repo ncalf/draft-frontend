@@ -46,7 +46,6 @@ const columnDefs: ColDef[] = [
 ];
 export function SoldPlayerCard() {
   const { isLoading, data, error } = useSoldPlayersQuery();
-
   if (error) {
     toast.error("Failed to fetch sold players");
   }

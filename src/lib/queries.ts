@@ -5,7 +5,6 @@ import {
   TeamPlayer,
   TeamID,
   PlayerInfo,
-  SoldPlayer,
 } from "@/lib/types";
 import { useDashboardStore } from "@/lib/store";
 
@@ -16,7 +15,7 @@ async function handleResponse(response: Response) {
     const errorData = await response.json();
     throw new Error(errorData.errors || "API request failed");
   }
-  return response.json();
+  return await response.json();
 }
 
 export function useUnsoldPlayersQuery() {
@@ -62,16 +61,18 @@ export function useTeamPlayersQuery(teamID: TeamID) {
   });
 }
 
-export function useSoldPlayersQuery() {
-  return useQuery<SoldPlayer[]>({
-    queryKey: ["soldPlayers", SEASON],
-    queryFn: async () => {
-      const response = await fetch(`/api/players/sold/?season=${SEASON}`);
+export const useSoldPlayersQuery = () => {
+  const season = SEASON;
 
+  return useQuery({
+    queryKey: ["soldPlayers", season],
+    queryFn: async () => {
+      const response = await fetch(`/api/players/sold?season=${season}`);
       return await handleResponse(response);
     },
+    select: (data) => [...data], // to maintain correct order
   });
-}
+};
 
 export function usePlayerInfoQuery() {
   return useQuery<PlayerInfo>({

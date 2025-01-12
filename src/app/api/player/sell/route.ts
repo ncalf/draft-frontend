@@ -32,10 +32,11 @@ const query = db
     sold: true,
     availableForSale: false,
     sequence: sql`(
-      (SELECT MAX(${draftPlayers.sequence}) FROM (
-        SELECT ${draftPlayers.sequence} FROM ${draftPlayers}
+      SELECT next_sequence FROM (
+        SELECT COALESCE(MAX(${draftPlayers.sequence}), 0) + 1 as next_sequence
+        FROM ${draftPlayers}
         WHERE ${draftPlayers.season} = ${sql.placeholder("seasonForSequence")}
-      ) AS temp) + 1
+      ) AS seq
     )`,
   })
   .where(

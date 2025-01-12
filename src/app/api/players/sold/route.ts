@@ -2,7 +2,7 @@ import { db } from "@/db";
 import { draftPlayers } from "@/db/schema";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, sql, desc } from "drizzle-orm";
 
 const SearchParamsSchema = z.object({
   season: z
@@ -19,6 +19,7 @@ const query = db
     club: draftPlayers.club,
     price: draftPlayers.price,
     team: draftPlayers.teamID,
+    sequence: draftPlayers.sequence,
   })
   .from(draftPlayers)
   .where(
@@ -27,6 +28,7 @@ const query = db
       eq(draftPlayers.sold, true)
     )
   )
+  .orderBy(desc(sql`CAST(${draftPlayers.sequence} AS SIGNED)`))
   .prepare();
 
 export async function GET(request: NextRequest) {

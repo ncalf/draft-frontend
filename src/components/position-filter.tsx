@@ -17,25 +17,31 @@ import { useRef, useState, useEffect } from "react";
 import SlotCounter, { SlotCounterRef } from "react-slot-counter";
 
 export function PositionFilterCard() {
-  const position = useDashboardStore((state) => state.position) || "none";
-  const [startingValue, setStartingValue] = useState(
-    positionShortenedNameToFullName(position, true)
-  );
+  const position = useDashboardStore((state) => state.position);
+  const [isLoading, setIsLoading] = useState(true);
+  const [startingValue, setStartingValue] = useState<string>("");
   const [isAnimating, setIsAnimating] = useState(false);
+
+  // will run on first load, load the saved position from local storage if there is one
+  useEffect(() => {
+    const storedState = localStorage.getItem("dashboard-storage");
+    const savedPosition = storedState
+      ? (JSON.parse(storedState)?.state?.position as Position)
+      : "none";
+
+    if (savedPosition !== "none") {
+      useDashboardStore.setState({ position: savedPosition });
+    }
+
+    setStartingValue(positionShortenedNameToFullName(savedPosition, true));
+    setIsLoading(false);
+  }, []);
 
   const availablePositions = useDashboardStore(
     (state) => state.availablePositions
   );
   const dummyCharacters = ["CENTRE", "DEFENDER", "FORWARD", "ONBALLER", "RUCK"];
   const counterRef = useRef<SlotCounterRef>(null);
-
-  useEffect(() => {
-    setStartingValue(positionShortenedNameToFullName(position, true));
-    counterRef.current?.startAnimation({
-      duration: 0.5,
-      dummyCharacterCount: 0,
-    });
-  }, [position]);
 
   const handlePositionChange = (
     newPosition: Position,
@@ -89,16 +95,20 @@ export function PositionFilterCard() {
       <ContextMenuTrigger asChild>
         <div className="col-start-1 col-end-6 row-start-8 row-end-9 flex items-center justify-center overflow-hidden">
           <Card className="cursor flex h-full w-full cursor-pointer justify-center overflow-hidden">
-            <SlotCounter
-              ref={counterRef}
-              containerClassName="font-semibold text-6xl transform -translate-y-1.5"
-              startValue={[startingValue]}
-              value={[positionShortenedNameToFullName(position, true)]}
-              dummyCharacters={dummyCharacters}
-              duration={3}
-              dummyCharacterCount={12}
-              autoAnimationStart={false}
-            />
+            {!isLoading && (
+              <SlotCounter
+                ref={counterRef}
+                containerClassName="font-semibold text-6xl transform -translate-y-1.5"
+                startValue={[startingValue]}
+                value={[
+                  positionShortenedNameToFullName(position || "none", true),
+                ]}
+                dummyCharacters={dummyCharacters}
+                duration={3}
+                dummyCharacterCount={12}
+                autoAnimationStart={false}
+              />
+            )}
           </Card>
         </div>
       </ContextMenuTrigger>

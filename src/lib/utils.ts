@@ -29,7 +29,7 @@ export function numberToPriceString(price: number | string): string {
 }
 
 export function positionShortenedNameToFullName(
-  shortName: string,
+  shortName: string | undefined,
   capital?: boolean
 ): string {
   const position = shortPositionsToPosition[shortName as Position] || "None";
