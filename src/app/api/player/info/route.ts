@@ -3,7 +3,6 @@ import { draftPlayers, stats } from "@/db/schema";
 import { and, eq, gte, sql, desc, count } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { playerSeasonIDtoPlayerIDQuery } from "../image/route";
 
 const SearchParamsSchema = z.object({
   season: z
@@ -19,6 +18,17 @@ const SearchParamsSchema = z.object({
     .regex(/^[1-9]\d*$/)
     .nonempty(),
 });
+
+const playerSeasonIDtoPlayerIDQuery = db
+  .select({ playerID: draftPlayers.playerID })
+  .from(draftPlayers)
+  .where(
+    and(
+      eq(draftPlayers.season, sql.placeholder("season")),
+      eq(draftPlayers.playerSeasonID, sql.placeholder("playerSeasonID"))
+    )
+  )
+  .limit(1);
 
 const basicInfoQuery = db
   .select({

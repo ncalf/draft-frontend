@@ -8,7 +8,15 @@ import path from "path";
 
 const pictureDirectory = process.env.PICTURE_DIRECTORY;
 
-export const playerSeasonIDtoPlayerIDQuery = db
+const SearchParamsSchema = z.object({
+  season: z
+    .string()
+    .regex(/^\d{4}$/)
+    .nonempty(),
+  playerSeasonID: z.number().int().positive(),
+});
+
+const playerSeasonIDtoPlayerIDQuery = db
   .select({ playerID: draftPlayers.playerID })
   .from(draftPlayers)
   .where(
@@ -18,14 +26,6 @@ export const playerSeasonIDtoPlayerIDQuery = db
     )
   )
   .limit(1);
-
-const SearchParamsSchema = z.object({
-  season: z
-    .string()
-    .regex(/^\d{4}$/)
-    .nonempty(),
-  playerSeasonID: z.number().int().positive(),
-});
 
 async function fileExists(path: string): Promise<boolean> {
   try {
