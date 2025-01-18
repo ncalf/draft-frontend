@@ -20,23 +20,23 @@ export function PlayerInfoCard() {
   }
 
   return (
-    <Card className="col-start-1 col-end-9 row-start-9 row-end-13 p-2 flex flex-row">
+    <Card className="col-start-1 col-end-9 row-start-9 row-end-13 p-1 flex flex-row">
       {currentPlayer ? (
         <>
           {isLoading ? (
-            <Skeleton className="w-[400px] h-[400px] rounded" />
+            <Skeleton className="w-[300px] h-[230px] rounded" />
           ) : (
             <Image
               src={`/api/player/image?season=${season}&playerSeasonID=${currentPlayer}`}
               alt="Player Image"
               className={`h-full object-cover rounded`}
-              width={350}
+              width={300}
               height={400}
               priority
             />
           )}
           <div className="flex flex-col w-full ml-4">
-            <span className="text-4xl font-semibold tracking-tight mb-4">
+            <span className="text-4xl font-semibold tracking-tight mb-1">
               {data ? (
                 <>
                   {currentPlayer}: {data.name} -{" "}
@@ -59,7 +59,7 @@ export function PlayerInfoCard() {
 
 const columnDefs: ColDef[] = [
   { field: "season", headerName: "Season", flex: 1.3 },
-  { field: "club", headerName: "Club", flex: 1.1 },
+  { field: "club", headerName: "Club", flex: 1.3 },
   { field: "gms", headerName: "Gms" },
   { field: "k", headerName: "K", flex: 1.1 },
   { field: "m", headerName: "M", flex: 1.1 },
@@ -86,7 +86,8 @@ function PlayerStatsTable() {
         rowData={data?.stats}
         loading={isLoading}
         suppressCellFocus={true}
-        rowHeight={33}
+        headerHeight={34}
+        rowHeight={30.7}
         getRowClass={(params) =>
           params.rowIndex === 0 ? "font-bold text-xl" : ""
         }

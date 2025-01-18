@@ -1,7 +1,7 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
-import { useTeamStatsQuery } from "@/lib/queries";
+import { useTeamStatsQuery, useUnsoldPlayersQuery } from "@/lib/queries";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { create } from "zustand";
 import { Button } from "@/components/ui/button";
@@ -55,12 +55,14 @@ export function SellOrGenerateCard() {
 }
 
 function GenerateButton() {
+  const { isLoading } = useUnsoldPlayersQuery();
   const generatePlayer = useGenerateRandomPlayer();
 
   return (
     <Button
-      className="h-full border bg-red-500 text-2xl font-semibold hover:bg-red-400"
+      className="h-full border bg-red-500 text-2xl hover:bg-red-400"
       onClick={generatePlayer}
+      disabled={isLoading}
     >
       Generate New Player
     </Button>
@@ -85,9 +87,9 @@ function SellButton() {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-h-[50vh] h-[50vh] w-[40vw] max-w-[40vw]">
+      <DialogContent className="max-h-[60vh] h-[60vh] w-[50vw] max-w-[50vw]">
         <DialogHeader>
-          <DialogTitle>Sell Player</DialogTitle>
+          <DialogTitle className="text-4xl">Sell Player</DialogTitle>
 
           <VisuallyHidden.Root>
             <DialogDescription>Sell a player</DialogDescription>
@@ -228,7 +230,9 @@ function SellPlayerForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit">Sell Player</Button>
+            <Button type="submit" className="h-full text-xl font-semibold">
+              Sell Player
+            </Button>
           </div>
         </div>
       </form>

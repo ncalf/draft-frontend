@@ -31,7 +31,8 @@ export function MVPsCard() {
         <AgGridReact
           rowData={topPlayers}
           columnDefs={columnDefs}
-          rowHeight={38}
+          headerHeight={34}
+          rowHeight={30.7}
           defaultColDef={{
             sortable: false,
             filter: false,

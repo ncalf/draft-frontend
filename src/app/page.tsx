@@ -1,46 +1,32 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { BookUser, LayoutDashboard } from "lucide-react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { MVPsCard } from "@/components/mvps";
+import { PlayerInfoCard } from "@/components/player-info";
+import { PositionFilterCard } from "@/components/position-filter";
+import { RemainingPlayersCard } from "@/components/remaining-players";
+import { SellOrGenerateCard } from "@/components/sell-and-generate";
+import { SoldPlayerCard } from "@/components/sold-players";
+import { TeamTableCard } from "@/components/teams-table";
+import { UnsoldPlayersCard } from "@/components/unsold-players";
+import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 
-export default function LandingScreen() {
-  const router = useRouter();
+ModuleRegistry.registerModules([AllCommunityModule]);
 
+// main component fed to the router, contains all the cards
+export default function Dashboard() {
   return (
-    <div className="h-screen w-screen bg-white flex flex-col space-y-10 items-center justify-center z-1">
-      <Image
-        src="/beetroot.jpeg"
-        className="w-auto h-auto"
-        alt="beetroot"
-        width={200}
-        height={200}
-      />
-      <h1>NCALF Draft season_here</h1>
-      <div className="flex flex-row space-x-7 h-16">
-        <Button
-          variant={"outline"}
-          className="p-4 flex flex-row space-x-7 w-full h-full items-center justify-center"
-          onClick={() => router.push("/dashboard")}
-        >
-          <LayoutDashboard />
-          Dashboard
-        </Button>
-        <Button
-          variant={"outline"}
-          className="p-4 flex flex-row space-x-7 w-full h-full items-center justify-center"
-          onClick={() => router.push("/team-view")}
-        >
-          <BookUser />
-          Team View
-        </Button>
-      </div>
-      <div className="text-xl text-muted-foreground text-left">
-        Instructions: <br />
-        Step 1: Connect to the router: SSID: NCALF Password: beetroot <br />
-        Step 2: Enter this address into your browser: ip_here <br />
-        Step 3: Select Team View
+    <div className="h-screen bg-gray-700 p-2">
+      <div className="grid h-full w-full grid-cols-10 grid-rows-12 gap-2">
+        <TeamTableCard />
+        <SoldPlayerCard />
+        <RemainingPlayersCard />
+
+        <MVPsCard />
+        <PositionFilterCard />
+        <UnsoldPlayersCard />
+
+        <PlayerInfoCard />
+        <SellOrGenerateCard />
       </div>
     </div>
   );

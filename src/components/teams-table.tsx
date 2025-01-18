@@ -60,6 +60,7 @@ export function TeamTableCard() {
         rowData={data}
         loading={isLoading}
         suppressCellFocus={true}
+        rowHeight={34.7}
         defaultColDef={{
           sortable: false,
           filter: false,

@@ -75,7 +75,6 @@ const UnsoldPlayersModalContent = () => {
     {
       field: "playerSeasonID",
       headerName: "ID",
-      sortable: false,
     },
     {
       field: "name",

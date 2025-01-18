@@ -24,8 +24,9 @@ export function RemainingPlayersCard() {
   }, [isLoading]);
 
   const numberOfPlayers = data?.length || 1;
+  console.log(data?.filter((player) => player.nominated === false));
   const numberOfUnnominatedPlayers =
-    data?.filter((player) => player.nominated === false).length || 1;
+    data?.filter((player) => player.nominated === false).length || 0;
 
   const displayUnnominated = Math.min(
     numberOfUnnominatedPlayers,
@@ -38,6 +39,9 @@ export function RemainingPlayersCard() {
 
   return (
     <Card className="flex col-start-9 col-end-11 row-start-1 row-end-4 flex-col p-2 overflow-hidden">
+      <div className="text-2xl font-semibold tracking-tight text-center">
+        {isLoading ? "Loading..." : `Players Remaining`}
+      </div>
       <GaugeComponent
         type="semicircle"
         value={displayUnnominated}
@@ -60,7 +64,7 @@ export function RemainingPlayersCard() {
               fill: "#000000",
               textShadow: "none",
               fontWeight: "normal",
-              marginTop: "-20px",
+              marginTop: "-30px",
             },
           },
           tickLabels: {
@@ -72,9 +76,6 @@ export function RemainingPlayersCard() {
         pointer={{ animate: false }}
         key={`gauge-${numberOfPlayers}-${displayUnnominated}`}
       />
-      <div className="scroll-m-20 text-2xl font-semibold tracking-tight text-center">
-        {isLoading ? "Loading..." : `Players Remaining`}
-      </div>
     </Card>
   );
 }

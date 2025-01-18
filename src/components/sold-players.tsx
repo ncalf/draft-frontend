@@ -22,7 +22,8 @@ const columnDefs: ColDef[] = [
   {
     field: "playerSeasonID",
     headerName: "ID",
-    flex: 0.9,
+    flex: 0.95,
+    cellStyle: { paddingLeft: 10 },
   },
   {
     field: "name",
@@ -33,16 +34,15 @@ const columnDefs: ColDef[] = [
   {
     field: "position",
     headerName: "Pos",
-    flex: 0.9,
   },
   {
     field: "club",
-    flex: 1,
+    flex: 1.1,
   },
   {
     field: "price",
     valueFormatter: (params: { value: string }) => `$${params.value}`,
-    flex: 1.5,
+    flex: 1.1,
   },
 ];
 export function SoldPlayerCard() {
@@ -61,7 +61,10 @@ export function SoldPlayerCard() {
         rowData={data}
         loading={isLoading}
         suppressCellFocus={true}
+        headerHeight={34}
+        rowHeight={36}
         defaultColDef={{
+          cellStyle: { paddingLeft: 0 },
           sortable: false,
           filter: false,
           resizable: false,
