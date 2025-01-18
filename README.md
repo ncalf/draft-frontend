@@ -6,6 +6,13 @@
 
  The backend API is also created with NextJS, using route handlers, and drizzle orm to communicate with the MySQL database.
 
+## High Seas Context
+ This is a custom fantasy football application based on a local sporting league. Data about every player and clubs from the AFL competition are scraped from the official website, to prepare for the drafting process.
+ This the process of selling each player to a fantasy football team, for a certain amount of in-tournament currency. A sporting position is randomly selected, and each player playing in that position for the year is shown in the drafting dashboard along with their image, name, and performance statistics for previous years.
+ Depending on the wishes of the fantasy footy participants, the player can be sold to a team through a dynamic modal (which handles situations such as team budgets and position limits) or a new player can be generated.
+ The status of the draft is stored in a MySQL database, which stores all players available in the draft and relevant information about them, such as the sporting clubs and positions they play for.
+ The website communicates with the database with GET and PATCH http requests, using optimistic updates for actions such as selling players to enable instant feedback on the frontend.
+
 ## Starting the Draft
 
 In order to start the NextJS application (which includes both the website and api) run `npm run build` and then `npm run start`. To do this, a `.env` file is required with the following values:
