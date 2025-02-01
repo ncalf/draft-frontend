@@ -277,7 +277,7 @@ function TeamRadioButton({
   const numberOfPlayers =
     teamStats.c + teamStats.d + teamStats.f + teamStats.ob + teamStats.rk;
   const rawValue = teamStats.total_price + (21 - numberOfPlayers) * 0.1;
-  const maximumSpendValue = 20 - rawValue;
+  const maximumSpendValue = Math.round((20 - rawValue) * 10) / 10;
   const maximumSpendString = numberToPriceString(maximumSpendValue);
 
   if (currentPrice > maximumSpendValue) {
