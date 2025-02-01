@@ -214,7 +214,11 @@ function SellPlayerForm() {
                   <FormControl>
                     <Select onValueChange={field.onChange} disabled={!isRookie}>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select position" />
+                        {isRookie ? (
+                          <SelectValue placeholder="Select position" />
+                        ) : (
+                          <SelectValue placeholder={position} />
+                        )}
                       </SelectTrigger>
                       <SelectContent>
                         {positions
