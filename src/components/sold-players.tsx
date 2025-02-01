@@ -2,7 +2,7 @@
 
 import { Card } from "@/components/ui/card";
 import { useSoldPlayersQuery } from "@/lib/queries";
-import { ColDef } from "ag-grid-community";
+import { ColDef, ITooltipParams } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import { toast } from "sonner";
 import {
@@ -14,6 +14,7 @@ import {
 import { Undo } from "lucide-react";
 import { useUndoSaleMutation } from "@/lib/mutations";
 import { Position } from "@/lib/types";
+import { teamIDToName } from "@/lib/utils";
 
 type Params = {
   data: { playerSeasonID: number; name: string; position: Position };
@@ -70,6 +71,8 @@ export function SoldPlayerCard() {
           resizable: false,
           flex: 1,
           suppressMovable: true,
+          tooltipValueGetter: (params: ITooltipParams) =>
+            teamIDToName(Number(params.data.team)),
         }}
       />
     </Card>
