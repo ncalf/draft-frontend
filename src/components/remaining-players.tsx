@@ -13,7 +13,7 @@ export function RemainingPlayersCard() {
     let toastId: string | number;
 
     if (isLoading) {
-      toastId = toast.loading("Fetching unsold players...");
+      toastId = toast.loading("Fetching players...");
     }
 
     return () => {

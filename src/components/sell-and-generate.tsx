@@ -37,6 +37,7 @@ import { useDashboardStore } from "@/lib/store";
 import { useSellPlayerMutation } from "@/lib/mutations";
 import { useEffect } from "react";
 import { useGenerateRandomPlayer } from "@/lib/hooks";
+import { toast } from "sonner";
 
 interface SoldPlayerStore {
   open: boolean;
@@ -121,21 +122,24 @@ function SellPlayerForm() {
   const mutation = useSellPlayerMutation();
   const generatePlayer = useGenerateRandomPlayer();
 
-  const positionFromStore = useDashboardStore((state) => state.position);
-  const isRookie = positionFromStore === "ROOK";
-  const position = isRookie ? form.watch("position") : positionFromStore;
+  const positionFromStore = useDashboardStore((state) => state.position); // Get the position from the store
+  const isRookie = positionFromStore === "ROOK"; // Check if the player is a rookie
+  const position = isRookie ? form.watch("position") : positionFromStore; // Get the position from the form if the player is a rookie
 
-  const { data: teamStats } = useTeamStatsQuery();
-  const watchedPrice = form.watch("price");
+  const { data: teamStats } = useTeamStatsQuery(); // Get the team stats
+  const watchedPrice = form.watch("price"); // Get the price from the form
 
   async function onSubmit(values: FormValues) {
-    const sellPosition = isRookie ? position : undefined; // If the player is a rookie, sell the player in the position selected in the form
-
+    if (position === undefined) {
+      toast.error("No position selected");
+      return;
+    } // Check if a position is selected
     mutation.mutate({
       playerSeasonID: useDashboardStore.getState().currentPlayer!,
       teamID: values.teamID,
       price: values.price,
-      ...(sellPosition ? { sellPosition } : {}),
+      sellPosition: position,
+      isRookie: isRookie,
     });
 
     generatePlayer();

@@ -68,11 +68,13 @@ export function useSellPlayerMutation() {
       teamID,
       price,
       sellPosition,
+      isRookie,
     }: {
       playerSeasonID: number;
       teamID: TeamID;
       price: number;
-      sellPosition?: Position;
+      sellPosition: Position;
+      isRookie: boolean;
     }) => {
       const position = useDashboardStore.getState().position;
       if (!position) {
@@ -80,7 +82,8 @@ export function useSellPlayerMutation() {
         return;
       }
 
-      if (sellPosition) {
+      // If the player is a rookie, store the playerSeasonID in the local storage as a wasRookiePlayer
+      if (isRookie) {
         const stored = localStorage.getItem("wasRookiePlayers");
         let wasRookiePlayers: number[] = [];
         try {
@@ -106,7 +109,8 @@ export function useSellPlayerMutation() {
         body: JSON.stringify({
           season: parseInt(SEASON),
           playerSeasonID,
-          ...(sellPosition ? { position: sellPosition } : {}),
+          position: sellPosition,
+          isRookie,
           teamID,
           price,
         }),
