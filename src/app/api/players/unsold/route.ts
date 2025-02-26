@@ -89,13 +89,11 @@ export async function GET(request: NextRequest) {
       position,
       season,
     });
-    console.log("Unsold Players: ", unsoldPlayers);
-
+    
     const playerSeasonStats = await playerseasonstatsquery.execute({
       seasonThreshold,
     });
-    console.log("Player Season Stats: ", playerSeasonStats);
-
+    
     // Filter the playerSeasonStats by the PlayerIDs in the result
     const filteredPlayerStats = playerSeasonStats.filter((item) =>
       unsoldPlayers.some((player) => player.playerID === item.playerID)
