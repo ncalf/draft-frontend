@@ -8,7 +8,7 @@ const connection = mysql.createPool({
   port: parseInt(process.env.DB_PORT!),
   user: "admin",
   password: process.env.DB_PASSWORD!,
-  database: "ncalfdb",
+  database: process.env.DB_NAME!,
 });
 
 export const db = drizzle(connection, {

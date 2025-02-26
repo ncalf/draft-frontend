@@ -10,6 +10,6 @@ export default defineConfig({
     port: parseInt(process.env.DB_PORT!),
     user: process.env.DB_USER!,
     password: process.env.DB_PASSWORD!,
-    database: "ncalfdb",
+    database: process.env.DB_NAME!,
   },
 });
