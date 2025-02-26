@@ -62,6 +62,7 @@ function numberSort(a: number, b: number) {
   return a - b;
 }
 type Params = { data: UnsoldPlayer };
+
 const UnsoldPlayersModalContent = () => {
   const { isLoading, data, error } = useUnsoldPlayersQuery();
   const [searchText, setSearchText] = useState("");
@@ -100,39 +101,39 @@ const UnsoldPlayersModalContent = () => {
       headerName: "GMS",
     },
     {
-      field: "k",
+      field: "sk",
       headerName: "K",
     },
     {
-      field: "m",
+      field: "sm",
       headerName: "M",
     },
     {
-      field: "hb",
+      field: "shb",
       headerName: "HB",
     },
     {
-      field: "ff",
+      field: "sff",
       headerName: "FF",
     },
     {
-      field: "fa",
+      field: "sfa",
       headerName: "FA",
     },
     {
-      field: "g",
+      field: "sg",
       headerName: "G",
     },
     {
-      field: "b",
+      field: "sb",
       headerName: "B",
     },
     {
-      field: "ho",
+      field: "sho",
       headerName: "HO",
     },
     {
-      field: "t",
+      field: "st",
       headerName: "T",
     },
     {

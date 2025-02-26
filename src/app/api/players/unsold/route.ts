@@ -17,47 +17,62 @@ const SearchParamsSchema = z.object({
     .nonempty(),
 });
 
-const query = db
+// Set up the query to get the unsold players from the draftPlayers table for the given position and season
+const notsoldplayersquery = db
   .select({
+    season: draftPlayers.season,
     playerSeasonID: draftPlayers.playerSeasonID,
-    name: sql`CONCAT(${draftPlayers.firstName}, ' ', ${draftPlayers.surname})`,
-    position: draftPlayers.position,
+    playerID: draftPlayers.playerID,
+    firstName: draftPlayers.firstName,
+    surname: draftPlayers.surname,
     club: draftPlayers.club,
-    gms: count(
-      sql`IF(${stats.positionPlayed} > 0 AND ${
-        stats.season
-      } >= ${sql.placeholder("seasonThreshold")}, 1, NULL)`
-    ),
-    k: sql`COALESCE(SUM(${stats.k}), 0)`,
-    m: sql`COALESCE(SUM(${stats.m}), 0)`,
-    hb: sql`COALESCE(SUM(${stats.hb}), 0)`,
-    ff: sql`COALESCE(SUM(${stats.ff}), 0)`,
-    fa: sql`COALESCE(SUM(${stats.fa}), 0)`,
-    g: sql`COALESCE(SUM(${stats.g}), 0)`,
-    b: sql`COALESCE(SUM(${stats.b}), 0)`,
-    ho: sql`COALESCE(SUM(${stats.ho}), 0)`,
-    t: sql`COALESCE(SUM(${stats.t}), 0)`,
+    position: draftPlayers.position,
     nominated: draftPlayers.nominated,
+    availableForSale: draftPlayers.availableForSale,
   })
   .from(draftPlayers)
-  .leftJoin(
-    stats,
-    and(
-      eq(draftPlayers.playerSeasonID, stats.playerSeasonID),
-      gte(stats.season, sql.placeholder("seasonThreshold")),
-      sql`${stats.positionPlayed} > 0`
-    )
-  )
   .where(
     and(
+      eq(draftPlayers.season, sql.placeholder("season")),
       eq(draftPlayers.position, sql.placeholder("position")),
-      eq(draftPlayers.sold, false),
-      eq(draftPlayers.season, sql.placeholder("season"))
+      eq(draftPlayers.sold, false)
     )
   )
-  .groupBy(draftPlayers.playerSeasonID)
   .prepare();
 
+  // Set up the query to get the player season stats for the previous season and playerSeasonID
+  const playerseasonstatsquery = db
+  .select({
+    season: stats.season,
+    playerSeasonID: stats.playerSeasonID,
+    playerID: stats.playerID,
+    firstName: draftPlayers.firstName,
+    surname: draftPlayers.surname,
+    club: stats.club,
+    gms: count(sql`IF(${stats.positionPlayed} > 0, 1, NULL)`),
+    sk: sql`COALESCE(SUM(${stats.k}), 0)`,
+    sm: sql`COALESCE(SUM(${stats.m}), 0)`,
+    shb: sql`COALESCE(SUM(${stats.hb}), 0)`,
+    sff: sql`COALESCE(SUM(${stats.ff}), 0)`,
+    sfa: sql`COALESCE(SUM(${stats.fa}), 0)`,
+    sg: sql`COALESCE(SUM(${stats.g}), 0)`,
+    sb: sql`COALESCE(SUM(${stats.b}), 0)`,
+    sho: sql`COALESCE(SUM(${stats.ho}), 0)`,
+    st: sql`COALESCE(SUM(${stats.t}), 0)`,
+  })
+  .from(stats)
+  .innerJoin(
+    draftPlayers,
+    eq(stats.playerID, draftPlayers.playerID)
+  )
+  .where(
+    eq(stats.season, sql.placeholder("seasonThreshold"))
+  )
+  .groupBy(stats.season, draftPlayers.playerID)
+  .orderBy(draftPlayers.playerID, stats.season)
+  .prepare();
+
+// Define the GET request handler
 export async function GET(request: NextRequest) {
   try {
     const rawParams = Object.fromEntries(
@@ -68,15 +83,36 @@ export async function GET(request: NextRequest) {
     const position = parsedParams.position;
     const season = parseInt(parsedParams.season);
     const years = parseInt(parsedParams.years);
-    const seasonThreshold = season - (years - 1);
+    const seasonThreshold = season - years;
 
-    const unsoldPlayers = await query.execute({
+    const unsoldPlayers = await notsoldplayersquery.execute({
       position,
       season,
+    });
+    console.log("Unsold Players: ", unsoldPlayers);
+
+    const playerSeasonStats = await playerseasonstatsquery.execute({
       seasonThreshold,
     });
+    console.log("Player Season Stats: ", playerSeasonStats);
 
-    return NextResponse.json(unsoldPlayers);
+    // Filter the playerSeasonStats by the PlayerIDs in the result
+    const filteredPlayerStats = playerSeasonStats.filter((item) =>
+      unsoldPlayers.some((player) => player.playerID === item.playerID)
+    );
+
+    // Merge the playerstats with the result
+    const mergedResult = unsoldPlayers.map((player) => ({
+      ...player,
+      name: `${player.firstName} ${player.surname}`,
+      ...filteredPlayerStats.find(
+        (stat) => stat.playerID === player.playerID
+      ),
+      playerSeasonID: player.playerSeasonID,
+    }));
+ 
+
+    return NextResponse.json(mergedResult);
   } catch (error) {
     console.log(error);
     if (error instanceof z.ZodError) {

@@ -29,7 +29,7 @@ export function useUnsoldPlayersQuery() {
       }
 
       const response = await fetch(
-        `/api/players/unsold/?position=${position}&season=${SEASON}&years=5`
+        `/api/players/unsold/?position=${position}&season=${SEASON}&years=1`
       );
 
       return await handleResponse(response);
