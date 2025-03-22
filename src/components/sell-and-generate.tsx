@@ -114,7 +114,7 @@ function SellPlayerForm() {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       teamID: 1,
-      price: 0,
+      price: 0.1,
       position: undefined,
     },
   });

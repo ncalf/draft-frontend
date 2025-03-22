@@ -3,7 +3,7 @@ import { draftPlayers, stats } from "@/db/schema";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { positions } from "@/lib/types";
-import { eq, and, sql, count, gte } from "drizzle-orm";
+import { eq, and, sql, count } from "drizzle-orm";
 
 const SearchParamsSchema = z.object({
   position: z.enum(positions),
@@ -103,10 +103,12 @@ export async function GET(request: NextRequest) {
     const mergedResult = unsoldPlayers.map((player) => ({
       ...player,
       name: `${player.firstName} ${player.surname}`,
+      
       ...filteredPlayerStats.find(
         (stat) => stat.playerID === player.playerID
       ),
       playerSeasonID: player.playerSeasonID,
+      club: player.club,
     }));
  
 
