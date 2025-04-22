@@ -19,8 +19,9 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { create } from "zustand";
 import { UnsoldPlayer } from "@/lib/types";
-import { useDashboardStore } from "@/lib/store";
+import { currentPlayerAtom } from "@/lib/store";
 import { useMarkPlayerNominatedMutation } from "@/lib/mutations";
+import { useAtom } from "jotai";
 
 interface UnsoldPlayerStore {
   open: boolean;
@@ -67,6 +68,7 @@ const UnsoldPlayersModalContent = () => {
   const { isLoading, data, error } = useUnsoldPlayersQuery();
   const [searchText, setSearchText] = useState("");
   const mutation = useMarkPlayerNominatedMutation();
+  const [currentPlayer, setCurrentPlayer] = useAtom(currentPlayerAtom);
 
   if (error) {
     toast.error("Failed to fetch unsold players");
@@ -148,9 +150,7 @@ const UnsoldPlayersModalContent = () => {
             const playerSeasonID = params.data.playerSeasonID;
 
             mutation.mutate(playerSeasonID);
-            useDashboardStore.setState({
-              currentPlayer: playerSeasonID,
-            });
+            setCurrentPlayer(playerSeasonID);
             useUnsoldPlayerStore.setState({ open: false });
           }}
         >

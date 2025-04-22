@@ -24,7 +24,6 @@ export function RemainingPlayersCard() {
   }, [isLoading]);
 
   const numberOfPlayers = data?.length || 1;
-  console.log(data?.filter((player) => player.nominated === false));
   const numberOfUnnominatedPlayers =
     data?.filter((player) => player.nominated === false).length || 0;
 

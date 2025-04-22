@@ -10,14 +10,20 @@ import {
   ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
-import { useDashboardStore } from "@/lib/store";
+import {
+  currentPlayerAtom,
+  positionAtom,
+  availablePositionsAtom,
+} from "@/lib/store";
 import { Position, positions } from "@/lib/types";
 import { positionShortenedNameToFullName } from "@/lib/utils";
 import { useRef, useState, useEffect } from "react";
 import SlotCounter, { SlotCounterRef } from "react-slot-counter";
+import { useAtom } from "jotai";
 
 export function PositionFilterCard() {
-  const position = useDashboardStore((state) => state.position);
+  const [position, setPosition] = useAtom(positionAtom);
+  const [currentPlayer, setCurrentPlayer] = useAtom(currentPlayerAtom);
   const [isLoading, setIsLoading] = useState(true);
   const [startingValue, setStartingValue] = useState<string>("");
   const [isAnimating, setIsAnimating] = useState(false);
@@ -30,15 +36,15 @@ export function PositionFilterCard() {
       : "none";
 
     if (savedPosition !== "none") {
-      useDashboardStore.setState({ position: savedPosition });
+      setPosition(savedPosition);
     }
 
     setStartingValue(positionShortenedNameToFullName(savedPosition, true));
     setIsLoading(false);
   }, []);
 
-  const availablePositions = useDashboardStore(
-    (state) => state.availablePositions
+  const [availablePositions, setAvailablePositions] = useAtom(
+    availablePositionsAtom
   );
   const dummyCharacters = ["CENTRE", "DEFENDER", "FORWARD", "ONBALLER", "RUCK"];
   const counterRef = useRef<SlotCounterRef>(null);
@@ -50,7 +56,7 @@ export function PositionFilterCard() {
     if (isAnimating) return; // to avoid changing positions when it already is animating
 
     setIsAnimating(true);
-    useDashboardStore.setState({ position: newPosition });
+    setPosition(newPosition);
 
     // if a position has been specifically selected, make a quick switch to it
     if (quickSwitch) {
@@ -68,7 +74,7 @@ export function PositionFilterCard() {
       );
       setStartingValue(newStartingValue);
       setIsAnimating(false);
-      useDashboardStore.setState({ currentPlayer: undefined });
+      setCurrentPlayer(undefined);
     }, 700);
   };
 
@@ -83,10 +89,7 @@ export function PositionFilterCard() {
     const updatedAvailablePositions = availablePositions.filter(
       (pos) => pos !== newPosition
     );
-    useDashboardStore.setState({
-      availablePositions: updatedAvailablePositions,
-    });
-
+    setAvailablePositions(availablePositions);
     handlePositionChange(newPosition, false);
   };
 

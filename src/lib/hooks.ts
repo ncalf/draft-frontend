@@ -1,12 +1,14 @@
 import { toast } from "sonner";
-import { useDashboardStore } from "@/lib/store";
+import { currentPlayerAtom, positionAtom } from "@/lib/store";
 import { usePlayerInfoQuery, useUnsoldPlayersQuery } from "@/lib/queries";
 import { useMarkPlayerNominatedMutation } from "@/lib/mutations";
+import { useAtom, useAtomValue } from "jotai";
 
 export function useGenerateRandomPlayer() {
   const { isLoading: isUnsoldPlayersLoading, data } = useUnsoldPlayersQuery();
   const { isLoading: isPlayerInfoLoading } = usePlayerInfoQuery();
-  const { position } = useDashboardStore.getState();
+  const position = useAtomValue(positionAtom);
+  const [currentPlayer, setCurrentPlayer] = useAtom(currentPlayerAtom);
   const mutation = useMarkPlayerNominatedMutation();
 
   function generatePlayer() {
@@ -25,7 +27,7 @@ export function useGenerateRandomPlayer() {
     const randomPlayer =
       unominatedPlayers[Math.floor(Math.random() * unominatedPlayers.length)];
     mutation.mutate(randomPlayer.playerSeasonID);
-    useDashboardStore.setState({ currentPlayer: randomPlayer.playerSeasonID });
+    setCurrentPlayer(randomPlayer.playerSeasonID);
   }
 
   return generatePlayer;

@@ -5,6 +5,7 @@ import { useTeamStatsQuery, useUnsoldPlayersQuery } from "@/lib/queries";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { create } from "zustand";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
@@ -33,11 +34,18 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { useDashboardStore } from "@/lib/store";
+import { currentPlayerAtom, positionAtom } from "@/lib/store";
 import { useSellPlayerMutation } from "@/lib/mutations";
 import { useEffect } from "react";
 import { useGenerateRandomPlayer } from "@/lib/hooks";
 import { toast } from "sonner";
+import { useState } from "react";
+import { atom, useAtom, useAtomValue } from "jotai";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
 
 interface SoldPlayerStore {
   open: boolean;
@@ -46,23 +54,40 @@ const useSoldPlayerStore = create<SoldPlayerStore>()(() => ({
   open: false,
 }));
 
+const sellingAtom = atom(false); // State to toggle between button and card
+const salePriceAtom = atom(0.1); // Counter state
+const popoverOpenAtom = atom(false); // State to control the popover
+
 export function SellOrGenerateCard() {
+  const open = useSoldPlayerStore((state) => state.open); // Get the open state from the store
+  const [selling, setSelling] = useAtom(sellingAtom); // Use the selling state from the atom
+
   return (
-    <Card className="col-start-9 col-end-11 row-start-9 row-end-13 flex flex-col space-y-2 p-2 overflow-hidden">
-      <SellButton />
+    <Card className="col-start-9 col-end-11 row-start-9 row-end-13 flex flex-col space-y-2 p-2 ">
+      {!selling ? (
+        // Render the green button initially
+        <SellButton />
+      ) : (
+        <SellingCard /> // Show the card with the counter and tick button
+      )}
+
       <GenerateButton />
     </Card>
   );
 }
 
 function GenerateButton() {
+  const [selling, setSelling] = useAtom(sellingAtom); // Use the selling state from the atom
   const { isLoading } = useUnsoldPlayersQuery();
   const generatePlayer = useGenerateRandomPlayer();
 
   return (
     <Button
       className="h-full border bg-red-500 text-2xl hover:bg-red-400"
-      onClick={generatePlayer}
+      onClick={() => {
+        generatePlayer;
+        setSelling(false); // Reset the selling state when generating a new player
+      }}
       disabled={isLoading}
     >
       Generate New Player
@@ -70,35 +95,134 @@ function GenerateButton() {
   );
 }
 
-function SellButton() {
-  const open = useSoldPlayerStore((state) => state.open);
-  const currentPlayer = useDashboardStore((state) => state.currentPlayer);
+function PlusButton() {
+  const [salePrice, setSalePrice] = useAtom(salePriceAtom); // Use the sale price state from the atom
+  return (
+    <Button
+      className="bg-gray-400 hover:bg-gray-200 text-xl w-10 h-10"
+      onClick={() => setSalePrice((prev) => prev + 0.1)} // Increment counter
+    >
+      +
+    </Button>
+  );
+}
+
+function MinusButton() {
+  const [salePrice, setSalePrice] = useAtom(salePriceAtom); // Use the sale price state from the atom
+  return (
+    <Button
+      className="bg-gray-400 hover:bg-gray-200 text-xl w-10 h-10"
+      onClick={() => setSalePrice((prev) => prev - 0.1)} // Increment counter
+    >
+      -
+    </Button>
+  );
+}
+
+function SellPopover() {
+  const [popoverOpen, setPopoverOpen] = useAtom(popoverOpenAtom); // Use the popover state from the atom
+
+  const handleSellClick = () => {
+    setPopoverOpen((prev) => !prev); // Toggle the popover state
+  };
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(open) => useSoldPlayerStore.setState({ open })}
-    >
-      <DialogTrigger asChild>
+    // Popover for Sell Player
+    <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+      <PopoverTrigger asChild>
         <Button
           className="h-full w-full border bg-green-500 text-2xl hover:bg-green-400"
-          disabled={!currentPlayer}
+          onClick={handleSellClick} // Open the popover
         >
-          Sell Player
+          Sell
         </Button>
-      </DialogTrigger>
+      </PopoverTrigger>
+      <PopoverContent className="w-72 p-4" sideOffset={40}>
+        <div className="flex flex-col space-y-2">
+          {/* Team Selection */}
+          <div>
+            <div className="font-bold">Team</div>
+            <RadioGroup className="flex flex-col space-y-1">
+              {teamsIDs.map((teamID) => {
+                const teamName = teamIDToName(teamID);
+                console.log("Team Name:", teamName);
+                return (
+                  <div>
+                    <RadioGroupItem
+                      id={teamID.toString()}
+                      value={teamID.toString()}
+                    />
+                    <Label htmlFor={teamID.toString()}> {teamName}</Label>
+                  </div>
+                );
+              })}
+            </RadioGroup>
+          </div>
 
-      <DialogContent className="max-h-[60vh] h-[60vh] w-[50vw] max-w-[50vw]">
-        <DialogHeader>
-          <DialogTitle className="text-4xl">Sell Player</DialogTitle>
+          {/* Position Selection */}
 
-          <VisuallyHidden.Root>
-            <DialogDescription>Sell a player</DialogDescription>
-          </VisuallyHidden.Root>
-        </DialogHeader>
-        <SellPlayerForm />
-      </DialogContent>
-    </Dialog>
+          <div className="font-bold">Position</div>
+          <div className="flex flex-row space-x-2">
+            <Select>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select position" />
+              </SelectTrigger>
+              <SelectContent>
+                {positions
+                  .filter((pos) => pos !== "ROOK")
+                  .map((pos) => (
+                    <SelectItem key={pos} value={pos}>
+                      {pos}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+            <Button>Sell</Button>
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+function SellingCard() {
+  const [salePrice, setSalePrice] = useAtom(salePriceAtom); // Counter state
+
+  return (
+    // Render the card with the counter and tick button
+    <Card className="h-full w-full flex flex-row items-center p-2">
+      <div className="text-4xl font-bold flex flex-col justify-center items-center w-1/3">
+        ${salePrice.toFixed(2)}
+      </div>
+      <div className="flex flex-col justify-center items-center space-y-2 w-1/3">
+        <PlusButton />
+        <MinusButton />
+      </div>
+      <div className="flex flex-col justify-center items-center h-full w-1/3">
+        <SellPopover /> {/* Popover for Sell Player */}
+      </div>
+    </Card>
+  );
+}
+
+function SellButton() {
+  const [selling, setSelling] = useAtom(sellingAtom); // Use the selling state from the atom
+  const [currentPlayer, setCurrentPlayer] = useAtom(currentPlayerAtom); // Use the current player state from the atom
+
+  return (
+    <Button
+      className="h-full w-full border bg-green-500 text-2xl hover:bg-green-400"
+      disabled={!currentPlayer}
+      onClick={() => {
+        if (selling) {
+          setSelling(false); // Reset the selling state when generating a new player
+        } else {
+          setSelling(true); // Set the selling state to true to show the card
+        }
+      }} // Show the card when clicked
+    >
+      Sell Player
+    </Button>
   );
 }
 
@@ -122,7 +246,7 @@ function SellPlayerForm() {
   const mutation = useSellPlayerMutation();
   const generatePlayer = useGenerateRandomPlayer();
 
-  const positionFromStore = useDashboardStore((state) => state.position); // Get the position from the store
+  const positionFromStore = useAtomValue(positionAtom); // Get the position from the store
   const isRookie = positionFromStore === "ROOK"; // Check if the player is a rookie
   const position = isRookie ? form.watch("position") : positionFromStore; // Get the position from the form if the player is a rookie
 
@@ -135,7 +259,7 @@ function SellPlayerForm() {
       return;
     } // Check if a position is selected
     mutation.mutate({
-      playerSeasonID: useDashboardStore.getState().currentPlayer!,
+      playerSeasonID: useAtomValue(currentPlayerAtom)!,
       teamID: values.teamID,
       price: values.price,
       sellPosition: position,

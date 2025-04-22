@@ -1,15 +1,16 @@
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/lib/providers";
-import { useDashboardStore } from "@/lib/store";
+import { currentPlayerAtom, positionAtom } from "@/lib/store";
 import { toast } from "sonner";
 import { Position, SoldPlayer, TeamID, UnsoldPlayer } from "@/lib/types";
+import { useAtom, useAtomValue } from "jotai";
 
 const SEASON = process.env.NEXT_PUBLIC_SEASON!;
 
 export function useMarkPlayerNominatedMutation() {
   return useMutation({
     mutationFn: async (playerSeasonID: number) => {
-      const position = useDashboardStore.getState().position;
+      const position = useAtomValue(positionAtom);
       if (!position) {
         toast.error("No position selected");
         return;
@@ -28,7 +29,7 @@ export function useMarkPlayerNominatedMutation() {
       });
     },
     onMutate: async (playerSeasonID: number) => {
-      const position = useDashboardStore.getState().position;
+      const position = useAtomValue(positionAtom);
       await queryClient.cancelQueries({
         queryKey: ["unsoldPlayers", position],
       });
@@ -54,7 +55,7 @@ export function useMarkPlayerNominatedMutation() {
     onError: (error, variables, context) => {
       toast.error("Failed to mark player as nominated");
       queryClient.setQueryData(
-        ["unsoldPlayers", useDashboardStore.getState().position],
+        ["unsoldPlayers", useAtomValue(positionAtom)],
         context?.previousUnsoldPlayers
       );
     },
@@ -76,7 +77,8 @@ export function useSellPlayerMutation() {
       sellPosition: Position;
       isRookie: boolean;
     }) => {
-      const position = useDashboardStore.getState().position;
+      const position = useAtomValue(positionAtom);
+
       if (!position) {
         toast.error("No position selected");
         return;
@@ -117,7 +119,7 @@ export function useSellPlayerMutation() {
       });
     },
     onMutate: async ({ playerSeasonID }) => {
-      const position = useDashboardStore.getState().position;
+      const position = useAtomValue(positionAtom);
       await queryClient.cancelQueries({
         queryKey: ["unsoldPlayers", position],
       });
@@ -141,12 +143,12 @@ export function useSellPlayerMutation() {
     onError: (error, variables, context) => {
       toast.error("Failed to sell player");
       queryClient.setQueryData(
-        ["unsoldPlayers", useDashboardStore.getState().position],
+        ["unsoldPlayers", useAtomValue(positionAtom)],
         context?.previousUnsoldPlayers
       );
     },
     onSuccess: (data, variables) => {
-      const position = useDashboardStore.getState().position;
+      const position = useAtomValue(positionAtom);
       queryClient.invalidateQueries({ queryKey: ["unsoldPlayers", position] });
       queryClient.invalidateQueries({ queryKey: ["soldPlayers", SEASON] });
       queryClient.invalidateQueries({ queryKey: ["teamStats", SEASON] });
@@ -186,7 +188,8 @@ export function useUndoSaleMutation() {
       });
     },
     onSuccess: (data, variables) => {
-      const position = useDashboardStore.getState().position;
+      const [position, setPosition] = useAtom(positionAtom);
+      const [currentPlayer, setCurrentPlayer] = useAtom(currentPlayerAtom);
 
       queryClient.invalidateQueries({ queryKey: ["soldPlayers", SEASON] });
       queryClient.invalidateQueries({ queryKey: ["teamStats", SEASON] });
@@ -206,7 +209,7 @@ export function useUndoSaleMutation() {
         });
       }
 
-      useDashboardStore.setState({ currentPlayer: variables.playerSeasonID });
+      setCurrentPlayer(variables.playerSeasonID);
 
       const stored = localStorage.getItem("wasRookiePlayers");
       const wasRookie = stored
@@ -221,10 +224,8 @@ export function useUndoSaleMutation() {
         });
       }
 
-      useDashboardStore.setState({
-        position: wasRookie ? "ROOK" : variables.position,
-      });
-
+      setPosition(wasRookie ? "ROOK" : variables.position);
+        
       if (wasRookie && stored) {
         const updated = JSON.parse(stored).filter(
           (id: number) => id !== variables.playerSeasonID

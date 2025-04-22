@@ -2,17 +2,18 @@
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePlayerInfoQuery } from "@/lib/queries";
-import { useDashboardStore } from "@/lib/store";
 import { clubShortenedNameToFullName } from "@/lib/utils";
 import { ColDef } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import Image from "next/image";
 import { toast } from "sonner";
+import { useAtom } from "jotai";
+import { currentPlayerAtom } from "@/lib/store";
 
 const season = process.env.NEXT_PUBLIC_SEASON;
 
 export function PlayerInfoCard() {
-  const currentPlayer = useDashboardStore((state) => state.currentPlayer);
+  const currentPlayer = useAtom(currentPlayerAtom);
   const { isLoading, data, error } = usePlayerInfoQuery();
 
   if (error) {

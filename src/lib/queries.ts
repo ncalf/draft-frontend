@@ -6,7 +6,8 @@ import {
   TeamID,
   PlayerInfo,
 } from "@/lib/types";
-import { useDashboardStore } from "@/lib/store";
+import { currentPlayerAtom, positionAtom } from "@/lib/store";
+import { useAtomValue } from "jotai";
 
 const SEASON = process.env.NEXT_PUBLIC_SEASON;
 
@@ -19,7 +20,7 @@ async function handleResponse(response: Response) {
 }
 
 export function useUnsoldPlayersQuery() {
-  const position = useDashboardStore((state) => state.position);
+  const position = useAtomValue(positionAtom);
 
   return useQuery<UnsoldPlayer[]>({
     queryKey: ["unsoldPlayers", position],
@@ -75,7 +76,7 @@ export const useSoldPlayersQuery = () => {
 };
 
 export function usePlayerInfoQuery() {
-  const currentPlayer = useDashboardStore((state) => state.currentPlayer);
+  const currentPlayer = useAtomValue(currentPlayerAtom);
 
   return useQuery<PlayerInfo>({
     queryKey: ["playerInfo", currentPlayer],
